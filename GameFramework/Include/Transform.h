@@ -30,8 +30,8 @@ public:
 
 	Vector3 GetRightVector() const;
 
-	//// rotates angle degrees around given axis
-	//void RotateArounAxis(float angle, const DirectX::XMFLOAT3 axis);
+	//// Adds angle degrees rotation around given axis
+	void RotateArounAxis(const Vector3& axis, float Angle);
 
 	Quaternion GetQuaterion() const;
 
@@ -44,6 +44,9 @@ struct Transform
 	Rotator Rotation;
 	Vector3 Scale = Vector3::One;
 
+	Transform() = default;
+	Transform(Matrix mat);
+
 	Matrix GetTransformMatrix() const;
 
 	Matrix GetTransformMatrixTransposed() const;
@@ -55,6 +58,9 @@ struct Transform
 	bool SetFromMatrix(Matrix Mat);
 
 	bool SetFromMatrixIgnoreScale(Matrix Mat);
+
+	// todo: rename this function
+	Transform TransformToWorld(const Transform& ParentTransform) const;
 
 
 	//DirectX::XMFLOAT3X3 GetNormalMatrix() const;

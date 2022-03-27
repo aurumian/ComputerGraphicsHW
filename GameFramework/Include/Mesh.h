@@ -127,8 +127,8 @@ class SphereMesh : public Mesh
 public:
 	SphereMesh()
 	{
-		const int numPointsVert = 100; // Excluding the "pole" points
-		const int numPointsHor = 200;
+		const int numPointsVert = 50; // Excluding the "pole" points
+		const int numPointsHor = 50;
 
 #pragma region GeneratePoints
 		std::vector<Vector4> points;

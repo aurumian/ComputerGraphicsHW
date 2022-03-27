@@ -18,10 +18,7 @@
     <ClInclude Include="Include\AABB2DCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\ActorComponent.h">
+    <ClInclude Include="Include\GameComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\Game.h">
@@ -60,15 +57,15 @@
     <ClInclude Include="Include\Collider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\OrbitCameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABB2DCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\ActorComponent.cpp">
+    <ClCompile Include="Src\GameComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\DisplayWin32.cpp">
@@ -102,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\Collider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Include\OrbitCameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

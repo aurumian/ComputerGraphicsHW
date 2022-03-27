@@ -14,24 +14,17 @@
       <FileName>Include\Actor.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="ActorComponent">
-    <Position X="1.75" Y="4.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIAEAACIAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Include\ActorComponent.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Game">
     <Position X="14.75" Y="0.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAQAAABAAgEAgwAFAAEC4QAANAjCCIAQYBCAAAAAAAI=</HashCode>
+      <HashCode>EAQAAABIAgEAgwAFAAEC4QABNAriCIAQZBCAQAACAAI=</HashCode>
       <FileName>Include\Game.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="InputDevice">
     <Position X="21.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>gAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <HashCode>gAAoAABAQAAAAAAAAAAAAEAAAAAACAAAAAAAQAAAAAA=</HashCode>
       <FileName>Include\InputDevice.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -101,7 +94,7 @@
   <Class Name="DisplayWin32">
     <Position X="18.5" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>QAABAAAEAAAABAAAAAAQIAAAAAAAAAAABAIAAAAAAEA=</HashCode>
+      <HashCode>QCABAAAEAAAABAAAAAAQIAAAAAAAAAAABAIAAAAAAEA=</HashCode>
       <FileName>Include\DisplayWin32.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -115,14 +108,14 @@
   <Struct Name="Rotator">
     <Position X="9.75" Y="1" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAABIAAAAAAIAGAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <HashCode>AAAAAAQAAABIAAAAAAIAGAAAAAAAQAAABAAAAAAAAQA=</HashCode>
       <FileName>Include\Transform.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Transform">
     <Position X="9" Y="6.25" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAIAgAAIAAGAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AgACAAAAAAAAAIAgAAIAAGQABBAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Include\Transform.h</FileName>
     </TypeIdentifier>
   </Struct>

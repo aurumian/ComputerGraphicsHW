@@ -3,10 +3,11 @@
 #include "ShaderCompiler.h"
 #include "Shader.h"
 #include "Mesh.h"
-#include "Actor.h"
 #include "DisplayWin32.h"
 #include "MeshRenderer.h"
 #include "CameraController.h"
+#include "OrbitCameraController.h"
+#include "InputDevice.h"
 
 void HW2Game::PrepareResources()
 {
@@ -34,52 +35,165 @@ void HW2Game::PrepareResources()
 	sc.SetEntryPoint("PSPlainColor");
 	psPlain = sc.CreateShader<PixelShader>();
 
-	// Setup camera
-	Camera* camera = new Camera();
-	CurrentCamera = camera;
+	// Setup PerspCamera
+	PerspCamera = new Camera();
+	CurrentCamera = PerspCamera;
+	PerspCamera->UpdateProjectionMatrixPerspective(45.0f, Display->GetAspectRatio(), 0.01f, 1000.0f);
+	PerspCamera->Transform.Position = PerspCamera->Transform.Rotation.GetForwardVector() * -5.0f;
 
-	camera->UpdateProjectionMatrixPerspective(45.0f, Display->GetAspectRatio(), 0.01f, 1000.0f);
+	OrthoCamera = new Camera();
+	const float height = 16.0f;
+	OrthoCamera->UpdateProjectionMatrixOrthographic(Display->GetAspectRatio() * height, height, -0.1f, -10.0f);
+	OrthoCamera->Transform.Position = Vector3(0.0f, 5.0f, -4.0f);
+	OrthoCamera->Transform.Rotation.SetEulerAngles(90.0f, 0.0f, 0.0f);
 
-	camera->Transform.Position = camera->Transform.Rotation.GetForwardVector() * -5.0f;
-
-	MeshRenderer* mr = nullptr;
-
-	//Actor* box = new Actor();
-	//mr = box->AddActorComponent<MeshRenderer>();
-	//mr->SetMesh(boxMesh);
-	//mr->SetVertexShader(vs);
-	//mr->SetPixelShader(ps);
-	////box->Transform.Rotation.SetEulerAngles(0.0f, 0.0f, 30.0f);
-
-	//Actor* box2 = new Actor();
-	//mr = box2->AddActorComponent<MeshRenderer>();
-	//mr->SetMesh(boxMesh);
-	//mr->SetVertexShader(vs);
-	//mr->SetPixelShader(ps);
-	//RotateAroundActorComponent* raac = box2->AddActorComponent<RotateAroundActorComponent>();
-	//raac->ActorToRotateAround = box;
-	//raac->OrbitRadius = 3.0f;
-	//raac->Scale = Vector3::One * 0.5f;
-
-	//Actor* box3 = new Actor();
-	//mr = box3->AddActorComponent<MeshRenderer>();
-	//mr->SetMesh(boxMesh);
-	//mr->SetVertexShader(vs);
-	//mr->SetPixelShader(ps);
-	//raac = box3->AddActorComponent<RotateAroundActorComponent>();
-	//raac->ActorToRotateAround = box2;
-	//raac->Scale = Vector3::One * 0.5f;
-
-	Actor* sphere1 = new Actor();
-	mr = sphere1->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(sphereMesh);
-	mr->SetVertexShader(vs);
-	mr->SetPixelShader(ps);
-	//sphere1->Transform.Position.z = 2.0f;
-
-	CameraController* camController = new CameraController();
-	camController->SetCameraToControl(camera);
+	Vector4 vec(0.0f, 0.0f, 1.0f, 1.0f);
+	vec = Vector4::Transform(vec, OrthoCamera->GetProjectionMatrix());
 
 
+	MeshRenderer* box = CreateGameComponent<MeshRenderer>();
+	box->SetMesh(boxMesh);
+	box->SetVertexShader(vs);
+	box->SetPixelShader(ps);
+	box->mTransform.Rotation.SetEulerAngles(0.0f, 0.0f, 30.0f);
+	box->mTransform.Position.x = 3.0f;
 
+	MeshRenderer* box2 = CreateGameComponent<MeshRenderer>();
+	box2->SetMesh(boxMesh);
+	box2->SetVertexShader(vs);
+	box2->SetPixelShader(ps);
+	RotateAroundActorComponent* raac = box2->AddChildComponent<RotateAroundActorComponent>();
+	raac->GCToRotateAround = box;
+	raac->OrbitRadius = 3.0f;
+	raac->Scale = Vector3::One * 0.5f;
+
+	MeshRenderer* box3 = CreateGameComponent<MeshRenderer>();
+	box3->SetMesh(boxMesh);
+	box3->SetVertexShader(vs);
+	box3->SetPixelShader(ps);
+	raac = box3->AddChildComponent<RotateAroundActorComponent>();
+	raac->GCToRotateAround = box2;
+	raac->Scale = Vector3::One * 0.5f;
+
+	MeshRenderer* box4 = CreateGameComponent<MeshRenderer>();
+	box4->SetMesh(boxMesh);
+	box4->SetVertexShader(vs);
+	box4->SetPixelShader(ps);
+	box4->mTransform.Rotation.SetEulerAngles(0.0f, 0.0f, -30.0f);
+	box4->mTransform.Position.x = -3.0f;
+	box4->AddChildComponent<RotatingComponent>();
+
+	MeshRenderer* box5 = box4->AddChildComponent<MeshRenderer>();
+	box5->SetMesh(boxMesh);
+	box5->SetVertexShader(vs);
+	box5->SetPixelShader(ps);
+	box5->mTransform.Position.z = 2.0f;
+	box5->mTransform.Scale = Vector3::One * 0.5f;
+	box5->AddChildComponent<RotatingComponent>();
+
+	MeshRenderer* box6 = box5->AddChildComponent<MeshRenderer>();
+	box6->SetMesh(boxMesh);
+	box6->SetVertexShader(vs);
+	box6->SetPixelShader(ps);
+	box6->mTransform.Position.z = 2.0f;
+	box6->mTransform.Scale = Vector3::One * 0.5f;
+	box6->AddChildComponent<RotatingComponent>();
+
+	MeshRenderer* box7 = box6->AddChildComponent<MeshRenderer>();
+	box7->SetMesh(boxMesh);
+	box7->SetVertexShader(vs);
+	box7->SetPixelShader(ps);
+	box7->mTransform.Position.z = 2.0f;
+	box7->mTransform.Scale = Vector3::One * 0.5f;
+	box7->AddChildComponent<RotatingComponent>();
+
+
+	// todo add debug circles for orbits
+
+	MeshRenderer* sphere1 = CreateGameComponent<MeshRenderer>();
+	sphere1->SetMesh(sphereMesh);
+	sphere1->SetVertexShader(vs);
+	sphere1->SetPixelShader(ps);
+	sphere1->mTransform.Position.y = 2.0f;
+
+	// Create sphere /*circle*/ grid
+	const int numSpheres = 10;
+	const float circleRadius = (numSpheres - 1) / 2.0f;
+	const float circleRadiusSq = circleRadius * circleRadius;
+	const float verDist = 2.5f;
+	const float horDist = 2.5f;
+	GameComponent* grid = CreateGameComponent<GameComponent>();
+	for (int i = 0; i < numSpheres; ++i)
+	{
+		for (int j = 0; j < numSpheres; ++j)
+		{
+			/*if (Vector2(i - circleRadius, j - circleRadius).LengthSquared() >= circleRadiusSq)
+			{
+				continue;
+			}*/
+
+			GameComponent* gc = grid->AddChildComponent<GameComponent>();
+			gc->mTransform.Position = Vector3(i * horDist, 0.0f, -j * verDist);
+
+			MeshRenderer* sphere = gc->AddChildComponent<MeshRenderer>();
+			sphere->SetMesh(sphereMesh);
+			sphere->SetVertexShader(vs);
+			sphere->SetPixelShader(psPlain);
+			const Color sphereColor = Color(0.0f, static_cast<float>((i + 1)) / numSpheres, static_cast<float>((j + 1)) / numSpheres, 1.0f);
+			sphere->SetColor(sphereColor);
+
+			FloatingComponent* fc = sphere->AddChildComponent<FloatingComponent>();
+			fc->Phase = i * numSpheres + j;
+		}
+	}
+	grid->mTransform.Scale = Vector3::One * 0.2f;
+	grid->mTransform.Position = Vector3(0.0f, 0.0f, -5.0f);
+	
+
+	FPSCC = CreateGameComponent<CameraController>();
+	FPSCC->SetCameraToControl(PerspCamera);
+
+	OrbitCC = CreateGameComponent<OrbitCameraController>();
+	//orbitCC->SetCameraToControl(PerspCamera);
+	OrbitCC->GCToOrbit = sphere1;
+}
+
+void HW2Game::Update(float DeltaTime)
+{
+
+	InputDevice& input = *Game::GetInstance()->GetInputDevice();
+
+	static float pressTime = GetTotalElapsedTime();
+
+	constexpr float cooldown = 0.2f;
+
+	if (GetTotalElapsedTime() - pressTime > cooldown)
+	{
+		if (input.IsKeyDown(79))
+		{
+			// switch PerspCamera controller
+			if (CurrentCC == FPSCC)
+			{
+				CurrentCC = OrbitCC;
+				FPSCC->SetCameraToControl(nullptr);
+				OrbitCC->SetCameraToControl(PerspCamera);
+			}
+			else
+			{
+				CurrentCC = FPSCC;
+				OrbitCC->SetCameraToControl(nullptr);
+				FPSCC->SetCameraToControl(PerspCamera);
+			}
+			pressTime = GetTotalElapsedTime();
+		}
+	}
+
+	if (input.IsKeyDown(84))
+	{
+		CurrentCamera = OrthoCamera;
+	}
+	else
+	{
+		CurrentCamera = PerspCamera;
+	}
 }

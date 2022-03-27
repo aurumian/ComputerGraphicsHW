@@ -4,15 +4,27 @@
 #include "Game.h"
 #include "InputDevice.h"
 
+CameraController::CameraController()
+{
+	bShouldUpdate = true;
+}
+
 void CameraController::SetCameraToControl(Camera* InCamera)
 {
 	Cam = InCamera;
-	FOV = Cam->GetFOV();
-	minFov = FOV;
+	if (Cam)
+	{
+		FOV = Cam->GetFOV();
+		minFov = FOV;
+	}
 }
 
 void CameraController::Update(float DeltaTime)
 {
+	if (Cam == nullptr)
+	{
+		return;
+	}
 	InputDevice& input = *Game::GetInstance()->GetInputDevice();
 
 	Vector3 movementDelta = Vector3::Zero;

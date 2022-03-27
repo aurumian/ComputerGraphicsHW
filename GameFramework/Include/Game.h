@@ -58,7 +58,9 @@ public:
 
 	ComPtr<ID3D11Buffer> GetPerObjectConstantBuffer();
 
+	void UpdateInternal(float DeltaTime);
 	virtual void Update(float DeltaTime);
+	
 
 	void Render();
 
@@ -68,8 +70,27 @@ public:
 	class DisplayWin32* GetDisplay();
 
 	class Collider* GetOverlapping(const class Collider* Col);
-
 	
+	template<class T>
+	T* CreateGameComponent(class GameComponent* Parent = nullptr)
+	{
+		T* comp = new T();
+
+		GameComponents.push_back(comp);
+
+		comp->SetParent(Parent);
+
+		if constexpr (std::is_base_of<class MeshRenderer, T>::value)
+		{
+			Renderers.push_back(comp);
+		}
+		else if constexpr (std::is_base_of<class Collider, T>::value)
+		{
+			Colliders.push_back(comp);
+		}
+
+		return comp;
+	}
 
 	/*
 	
@@ -101,8 +122,7 @@ protected:
 	std::vector<class MeshRenderer*> Renderers;
 	std::vector<class Collider*> Colliders;
 
-	friend class Actor;
-	std::vector<class Actor*> Actors;
+	std::vector<class GameComponent*> GameComponents;
 
 	Camera* CurrentCamera = nullptr;
 

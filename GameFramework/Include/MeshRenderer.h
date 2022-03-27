@@ -2,11 +2,11 @@
 
 #include "Mesh.h"
 #include "Shader.h"
-#include "ActorComponent.h"
+#include "GameComponent.h"
 
 #include <DirectXMath.h>
 
-class MeshRenderer : public ActorComponent
+class MeshRenderer : public GameComponent
 {
 public:
 	void SetMesh(Mesh* InMesh) { Mesh = InMesh; }
@@ -27,6 +27,6 @@ private:
 	PixelShader* PixelShader = nullptr;
 
 	// todo: move to a material
-	XMFLOAT4 Color;
+	Color Color;
 };
 

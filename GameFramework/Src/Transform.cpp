@@ -56,9 +56,19 @@ Vector3 Rotator::GetRightVector() const
 	return XMVector3Rotate(Vector3::Right, Quat);
 }
 
+void Rotator::RotateArounAxis(const Vector3& axis, float Angle)
+{
+	Quat.Concatenate(Quat, DirectX::XMQuaternionRotationAxis(axis, Angle), Quat);
+}
+
 Quaternion Rotator::GetQuaterion() const
 {
 	return Quat;
+}
+
+Transform::Transform(Matrix mat)
+{
+	SetFromMatrix(mat);
 }
 
 Matrix Transform::GetTransformMatrix() const
@@ -111,6 +121,11 @@ bool Transform::SetFromMatrixIgnoreScale(Matrix Mat)
 {
 	Vector3 scale;
 	return Mat.Decompose(scale, Rotation.Quat, Position);
+}
+
+Transform Transform::TransformToWorld(const Transform& ParentTransform) const
+{
+	return GetTransformMatrix() * ParentTransform.GetTransformMatrix();
 }
 
 

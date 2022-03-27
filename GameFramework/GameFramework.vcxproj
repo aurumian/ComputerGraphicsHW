@@ -152,8 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Include\AABB2DCollider.h" />
-    <ClInclude Include="Include\Actor.h" />
-    <ClInclude Include="Include\ActorComponent.h" />
+    <ClInclude Include="Include\GameComponent.h" />
     <ClInclude Include="Include\Camera.h" />
     <ClInclude Include="Include\CameraController.h" />
     <ClInclude Include="Include\Collider.h" />
@@ -163,14 +162,15 @@
     <ClInclude Include="Include\MathInclude.h" />
     <ClInclude Include="Include\Mesh.h" />
     <ClInclude Include="Include\MeshRenderer.h" />
+    <ClInclude Include="Include\OrbitCameraController.h" />
     <ClInclude Include="Include\Shader.h" />
     <ClInclude Include="Include\ShaderCompiler.h" />
     <ClInclude Include="Include\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Include\OrbitCameraController.cpp" />
     <ClCompile Include="Src\AABB2DCollider.cpp" />
-    <ClCompile Include="Src\Actor.cpp" />
-    <ClCompile Include="Src\ActorComponent.cpp" />
+    <ClCompile Include="Src\GameComponent.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\CameraController.cpp" />
     <ClCompile Include="Src\Collider.cpp" />

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MathInclude.h"
-#include "ActorComponent.h"
+#include "GameComponent.h"
 
 #define COLLIDER_CHILD_BODY() \
 public: \
@@ -10,7 +10,7 @@ virtual bool DoesOverlap(const Collider& Other) const override \
 	return Other.DoesOverlap(*this); \
 } \
 
-class Collider : public ActorComponent
+class Collider : public GameComponent
 {
 public:
 

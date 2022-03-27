@@ -3,7 +3,6 @@
 #include "DisplayWin32.h"
 #include "InputDevice.h"
 #include "MeshRenderer.h"
-#include "Actor.h"
 #include "ShaderCompiler.h"
 #include "AABB2DCollider.h"
 
@@ -195,7 +194,7 @@ void Game::Run()
 		}
 
 		// Update
-		Update(deltaTime);
+		UpdateInternal(deltaTime);
 
 		// Render
 		Render();
@@ -234,12 +233,22 @@ ComPtr<ID3D11Buffer> Game::GetPerObjectConstantBuffer()
 	return PerObjectCB;
 }
 
+void Game::UpdateInternal(float DeltaTime)
+{
+	for (GameComponent* gc : GameComponents)
+	{
+		if (gc != nullptr && gc->bShouldUpdate)
+		{
+			gc->Update(DeltaTime);
+		}
+	}
+	
+	Update(DeltaTime);
+}
+
 void Game::Update(float DeltaTime)
 {
-	for (Actor* actor : Actors)
-	{
-		actor->Update(DeltaTime);
-	}
+	
 }
 
 void Game::Render()
@@ -323,13 +332,17 @@ Game* Game::GetInstance()
 
 float Game::GetTotalElapsedTime()
 {
-	float now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000.0f;
+	float now = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now().time_since_epoch()).count() / 1000000.0f;
 
 	return now - StartTime;
 }
 
 Game::~Game()
 {
+	for (GameComponent* gc : GameComponents)
+	{
+		delete gc;
+	}
 	Context->Flush();
 }
 
