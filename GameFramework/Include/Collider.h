@@ -17,4 +17,6 @@ public:
 	virtual bool DoesOverlap(const Collider& Other) const = 0;
 
 	virtual bool DoesOverlap(const class AABB2DCollider& Other) const;
+
+	virtual bool DoesOverlap(const class SphereCollider& Other) const;
 };

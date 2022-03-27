@@ -60,6 +60,9 @@
     <ClInclude Include="Include\OrbitCameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\SphereCollider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABB2DCollider.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="Include\OrbitCameraController.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\SphereCollider.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
