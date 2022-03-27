@@ -45,6 +45,7 @@ public:
 private:
 	class BoxMesh* boxMesh;
 	class CircleMesh* circleMesh;
+	class SphereMesh* sphereMesh;
 	class SimpleVertexShader* vs;
 	class PixelShader* ps;
 	class PixelShader* psPlain;

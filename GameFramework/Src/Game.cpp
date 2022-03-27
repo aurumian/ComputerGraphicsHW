@@ -79,7 +79,7 @@ void Game::CreateBackBuffer()
 
 	Context->RSSetViewports(1, &viewport);
 
-	// todo: move to mesh renderer
+	// todo: move to mesh material
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	rastDesc.FillMode = D3D11_FILL_SOLID;
@@ -296,13 +296,13 @@ DisplayWin32* Game::GetDisplay()
 	return Display;
 }
 
-AABB2DCollider* Game::GetOverlapping(const AABB2DCollider* Col)
+Collider* Game::GetOverlapping(const Collider* Col)
 {
 	if (Col == nullptr)
 	{
 		return nullptr;
 	}
-	for (AABB2DCollider* c : Colliders)
+	for (Collider* c : Colliders)
 	{
 		if (c == Col)
 		{

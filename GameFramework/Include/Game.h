@@ -67,7 +67,7 @@ public:
 	class InputDevice* GetInputDevice();
 	class DisplayWin32* GetDisplay();
 
-	class AABB2DCollider* GetOverlapping(const class AABB2DCollider* Col);
+	class Collider* GetOverlapping(const class Collider* Col);
 
 	
 
@@ -99,7 +99,7 @@ protected:
 	Game();
 
 	std::vector<class MeshRenderer*> Renderers;
-	std::vector<class AABB2DCollider*> Colliders;
+	std::vector<class Collider*> Colliders;
 
 	friend class Actor;
 	std::vector<class Actor*> Actors;

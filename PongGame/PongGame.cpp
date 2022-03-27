@@ -19,7 +19,7 @@ void BallActor::Update(float DeltaTime)
 		// if overlapping border, then inverse y direction
 		// if overlapping player inverse x direction
 		// if overlapping player back move the ball to center and update the Score
-		AABB2DCollider* col = Game::GetInstance()->GetOverlapping(GetComponent<AABB2DCollider>());
+		Collider* col = Game::GetInstance()->GetOverlapping(GetComponent<AABB2DCollider>());
 
 		if (col != nullptr && !WaitForEndOverlap)
 		{

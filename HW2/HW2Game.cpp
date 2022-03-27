@@ -11,9 +11,10 @@
 void HW2Game::PrepareResources()
 {
 	Game::PrepareResources();
-	// create mesh
+	// create meshes
 	boxMesh = new BoxMesh();
 	circleMesh = new CircleMesh();
+	sphereMesh = new SphereMesh();
 
 
 	// create shaders
@@ -41,32 +42,40 @@ void HW2Game::PrepareResources()
 
 	camera->Transform.Position = camera->Transform.Rotation.GetForwardVector() * -5.0f;
 
+	MeshRenderer* mr = nullptr;
 
-	Actor* box = new Actor();
-	MeshRenderer* mr = box->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(boxMesh);
+	//Actor* box = new Actor();
+	//mr = box->AddActorComponent<MeshRenderer>();
+	//mr->SetMesh(boxMesh);
+	//mr->SetVertexShader(vs);
+	//mr->SetPixelShader(ps);
+	////box->Transform.Rotation.SetEulerAngles(0.0f, 0.0f, 30.0f);
+
+	//Actor* box2 = new Actor();
+	//mr = box2->AddActorComponent<MeshRenderer>();
+	//mr->SetMesh(boxMesh);
+	//mr->SetVertexShader(vs);
+	//mr->SetPixelShader(ps);
+	//RotateAroundActorComponent* raac = box2->AddActorComponent<RotateAroundActorComponent>();
+	//raac->ActorToRotateAround = box;
+	//raac->OrbitRadius = 3.0f;
+	//raac->Scale = Vector3::One * 0.5f;
+
+	//Actor* box3 = new Actor();
+	//mr = box3->AddActorComponent<MeshRenderer>();
+	//mr->SetMesh(boxMesh);
+	//mr->SetVertexShader(vs);
+	//mr->SetPixelShader(ps);
+	//raac = box3->AddActorComponent<RotateAroundActorComponent>();
+	//raac->ActorToRotateAround = box2;
+	//raac->Scale = Vector3::One * 0.5f;
+
+	Actor* sphere1 = new Actor();
+	mr = sphere1->AddActorComponent<MeshRenderer>();
+	mr->SetMesh(sphereMesh);
 	mr->SetVertexShader(vs);
 	mr->SetPixelShader(ps);
-	box->Transform.Rotation.SetEulerAngles(0.0f, 0.0f, 30.0f);
-
-	Actor* box2 = new Actor();
-	mr = box2->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(boxMesh);
-	mr->SetVertexShader(vs);
-	mr->SetPixelShader(ps);
-	RotateAroundActorComponent* raac = box2->AddActorComponent<RotateAroundActorComponent>();
-	raac->ActorToRotateAround = box;
-	raac->OrbitRadius = 3.0f;
-	raac->Scale = Vector3::One * 0.5f;
-
-	Actor* box3 = new Actor();
-	mr = box3->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(boxMesh);
-	mr->SetVertexShader(vs);
-	mr->SetPixelShader(ps);
-	raac = box3->AddActorComponent<RotateAroundActorComponent>();
-	raac->ActorToRotateAround = box2;
-	raac->Scale = Vector3::One * 0.5f;
+	//sphere1->Transform.Position.z = 2.0f;
 
 	CameraController* camController = new CameraController();
 	camController->SetCameraToControl(camera);

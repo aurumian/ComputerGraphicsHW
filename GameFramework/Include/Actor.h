@@ -29,7 +29,7 @@ public:
 		{
 			Game::GetInstance()->Renderers.push_back(comp);
 		}
-		else if constexpr (std::is_base_of<class AABB2DCollider, T>::value)
+		else if constexpr (std::is_base_of<class Collider, T>::value)
 		{
 			Game::GetInstance()->Colliders.push_back(comp);
 		}

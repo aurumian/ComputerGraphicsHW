@@ -1,11 +1,14 @@
 #pragma once
 
-#include "ActorComponent.h"
+#include "Collider.h"
 
-class AABB2DCollider : public ActorComponent
+class AABB2DCollider : public Collider
 {
 public:
-	bool DoesOverlap(const AABB2DCollider& Other) const;
+
+	COLLIDER_CHILD_BODY()
+
+	virtual bool DoesOverlap(const AABB2DCollider& Other) const override;
 
 private:
 	bool DoesOverlap1D(float a, float b, float c, float d) const;

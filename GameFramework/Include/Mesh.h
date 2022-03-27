@@ -74,14 +74,10 @@ public:
 			XMFLOAT4 point = XMFLOAT4(cosf(alpha), sinf(alpha), 0.0f, 1.0f);
 			points.push_back(point);
 			points.push_back(XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f));
+
 			indices.push_back(0);
 			indices.push_back(i);
-			int ind2 = (i + 1) % (numPoints + 1);
-			if (ind2 == 0)
-			{
-				ind2 = 1;
-			}
-			indices.push_back(ind2);
+			indices.push_back((i % numPoints) + 1);
 		}
 
 		Initialize(&points[0], points.size(), &indices[0], indices.size());
@@ -122,5 +118,82 @@ public:
 		};
 
 		Initialize(points, std::size(points), indices, std::size(indices));
+	}
+};
+
+#include "MathInclude.h"
+class SphereMesh : public Mesh
+{
+public:
+	SphereMesh()
+	{
+		const int numPointsVert = 100; // Excluding the "pole" points
+		const int numPointsHor = 200;
+
+#pragma region GeneratePoints
+		std::vector<Vector4> points;
+		// Generate north pole point
+		points.push_back({ 0.0f, 1.0f, 0.0f, 1.0f });
+		points.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+		const float phetaDelta = XM_PI / (numPointsVert + 1);
+		for (int j = 0; j < numPointsVert; ++j)
+		{
+			// Generate current circle points
+			const float pheta = XM_PIDIV2 - phetaDelta * (j + 1);
+			const float y = sinf(pheta);
+			const float deltaAlpha = XM_2PI / static_cast<float>(numPointsHor);
+			const float curRadius = cosf(pheta);
+			for (int i = 0; i < numPointsHor; ++i)
+			{
+				const float alpha = deltaAlpha * i;
+				points.push_back(XMFLOAT4(curRadius * cosf(alpha), y, curRadius * sinf(alpha), 1.0f));
+				points.push_back(XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f));
+			}
+		}
+
+		// Generate south pole point
+		points.push_back({ 0.0f, -1.0f, 0.0f, 1.0f });
+		points.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+#pragma endregion GeneratePoints
+
+#pragma region CreateTriangleIndices
+		std::vector<int> indices;
+		// Connect the first circle to the north pole
+		for (int i = 1; i <= numPointsHor; ++i)
+		{
+			indices.push_back(0);
+			indices.push_back(i);
+			indices.push_back((i % numPointsHor) + 1);
+		}
+		// Connect the intermediate circles to each other
+		for (int j = 1; j < numPointsVert; ++j)
+		{
+				const int curOffset = j * numPointsHor;
+				const int prevOffset = curOffset - numPointsHor;
+				for (int i = 1; i <= numPointsHor; ++i)
+				{
+					const int circlePoint1 = i;
+					const int circlePoint2 = (i % numPointsHor) + 1;
+					indices.push_back(prevOffset + circlePoint2);
+					indices.push_back(prevOffset + circlePoint1);
+					indices.push_back(curOffset + circlePoint1);
+					indices.push_back(curOffset + circlePoint1);
+					indices.push_back(curOffset + circlePoint2);
+					indices.push_back(prevOffset + circlePoint2);
+				}
+		}
+		// Connect the last circle to the south pole
+		const int offset = (numPointsVert - 1) * numPointsHor;
+		for (int i = 1; i <= numPointsHor; ++i)
+		{
+			indices.push_back(offset + i);
+			indices.push_back(offset + (i % numPointsHor) + 1);
+			indices.push_back(numPointsHor * numPointsVert + 1);
+		}
+#pragma endregion CreateTriangleIndices
+		
+
+		Initialize(&points[0], points.size(), &indices[0], indices.size());
 	}
 };
