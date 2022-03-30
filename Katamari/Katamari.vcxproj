@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{cfb25c94-968f-4fe3-8bfa-9916c240819e}</ProjectGuid>
-    <RootNamespace>GameFramework</RootNamespace>
+    <ProjectGuid>{819b7c70-fa86-4fcf-8b4e-792a29bfbde8}</ProjectGuid>
+    <RootNamespace>Katamari</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)DirectXTK\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameFramework/Include;$(SolutionDir)DirectXTK/Include;$(ProjectDir)Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)DirectXTK\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameFramework/Include;$(SolutionDir)DirectXTK/Include;$(ProjectDir)Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -120,16 +120,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameFramework/Include;$(SolutionDir)DirectXTK/Include;$(ProjectDir)Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)DirectXTK\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -139,8 +136,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)GameFramework/Include;$(SolutionDir)DirectXTK/Include;$(ProjectDir)Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)DirectXTK\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,54 +145,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
-    <Lib>
-      <AdditionalDependencies>d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Include\AABB2DCollider.h" />
-    <ClInclude Include="Include\GameComponent.h" />
-    <ClInclude Include="Include\Camera.h" />
-    <ClInclude Include="Include\CameraController.h" />
-    <ClInclude Include="Include\Collider.h" />
-    <ClInclude Include="Include\DisplayWin32.h" />
-    <ClInclude Include="Include\Game.h" />
-    <ClInclude Include="Include\InputDevice.h" />
-    <ClInclude Include="Include\MathInclude.h" />
-    <ClInclude Include="Include\Mesh.h" />
-    <ClInclude Include="Include\MeshRenderer.h" />
-    <ClInclude Include="Include\OrbitCameraController.h" />
-    <ClInclude Include="Include\PlaneComponent.h" />
-    <ClInclude Include="Include\Renderer.h" />
-    <ClInclude Include="Include\Shader.h" />
-    <ClInclude Include="Include\ShaderCompiler.h" />
-    <ClInclude Include="Include\SphereCollider.h" />
-    <ClInclude Include="Include\Transform.h" />
+    <ClCompile Include="Katamari.cpp" />
+    <ClCompile Include="Src\KatamariGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Include\OrbitCameraController.cpp" />
-    <ClCompile Include="Src\AABB2DCollider.cpp" />
-    <ClCompile Include="Src\GameComponent.cpp" />
-    <ClCompile Include="Src\Camera.cpp" />
-    <ClCompile Include="Src\CameraController.cpp" />
-    <ClCompile Include="Src\Collider.cpp" />
-    <ClCompile Include="Src\DisplayWin32.cpp" />
-    <ClCompile Include="Src\Game.cpp" />
-    <ClCompile Include="Src\InputDevice.cpp" />
-    <ClCompile Include="Src\Mesh.cpp" />
-    <ClCompile Include="Src\MeshRenderer.cpp" />
-    <ClCompile Include="Src\PlaneComponent.cpp" />
-    <ClCompile Include="Src\Shader.cpp" />
-    <ClCompile Include="Src\ShaderCompiler.cpp" />
-    <ClCompile Include="Src\SphereCollider.cpp" />
-    <ClCompile Include="Src\Transform.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <ClInclude Include="Include\KatamariGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DirectXTK\DirectXTK.vcxproj">
       <Project>{0cf8fa75-e725-41dd-b5d6-2fb912fe070f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\GameFramework\GameFramework.vcxproj">
+      <Project>{cfb25c94-968f-4fe3-8bfa-9916c240819e}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

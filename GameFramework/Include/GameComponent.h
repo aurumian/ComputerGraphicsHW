@@ -31,7 +31,7 @@ public:
 
 private:
 
-	GameComponent* Parent;
+	GameComponent* Parent = nullptr;
 
 	std::vector<GameComponent*> Children;
 };

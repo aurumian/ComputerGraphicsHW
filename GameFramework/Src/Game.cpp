@@ -278,7 +278,7 @@ void Game::Render()
 
 	Context->Unmap(PerDrawCB.Get(), 0);
 
-	for (MeshRenderer* renderer : Renderers)
+	for (Renderer* renderer : Renderers)
 	{
 		if (renderer != nullptr)
 		{

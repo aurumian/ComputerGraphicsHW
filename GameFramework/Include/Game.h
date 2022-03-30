@@ -80,7 +80,7 @@ public:
 
 		comp->SetParent(Parent);
 
-		if constexpr (std::is_base_of<class MeshRenderer, T>::value)
+		if constexpr (std::is_base_of<class Renderer, T>::value)
 		{
 			Renderers.push_back(comp);
 		}
@@ -119,7 +119,7 @@ protected:
 
 	Game();
 
-	std::vector<class MeshRenderer*> Renderers;
+	std::vector<class Renderer*> Renderers;
 	std::vector<class Collider*> Colliders;
 
 	std::vector<class GameComponent*> GameComponents;

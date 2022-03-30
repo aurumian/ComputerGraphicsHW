@@ -4,9 +4,11 @@
 
 #include <d3d11.h>
 
+#include "Shader.h"
+
 void MeshRenderer::Render()
 {
-	if (VertexShader == nullptr || PixelShader == nullptr || Mesh == nullptr)
+	if (mVertexShader == nullptr || mPixelShader == nullptr || Mesh == nullptr)
 	{
 		return;
 	}
@@ -20,8 +22,8 @@ void MeshRenderer::Render()
 	// todo: optimize rendering by 
 	// checking which shader is set now
 	// and/or sorting meshes by used shaders
-	VertexShader->UseShader();
-	PixelShader->UseShader();
+	mVertexShader->UseShader();
+	mPixelShader->UseShader();
 
 	// Update constant buffer with world matrix
 	CBPerObject cbData;

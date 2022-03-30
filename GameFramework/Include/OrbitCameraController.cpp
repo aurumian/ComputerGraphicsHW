@@ -43,8 +43,8 @@ void OrbitCameraController::Update(float DeltaTime)
 
 	OrbitRadius += orbitRadiusDelta;
 	
-	// todo: ignore GCToOrbit's yaw and pitch rotation and scale
+	// todo: ignore only GCToOrbit's yaw and pitch rotation and scale
 	Cam->Transform = Matrix::CreateTranslation(Vector3(0.0f, 0.0f, OrbitRadius)) * 
 		Matrix::CreateFromYawPitchRoll(DirectX::XMConvertToRadians(Yaw), DirectX::XMConvertToRadians(Pitch), 0.0f) * 
-		GCToOrbit->GetWorldTransform().GetTransformMatrix();
+		Matrix::CreateTranslation(GCToOrbit->GetWorldTransform().Position);
 }

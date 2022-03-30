@@ -63,6 +63,12 @@
     <ClInclude Include="Include\SphereCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PlaneComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABB2DCollider.cpp">
@@ -109,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="Src\SphereCollider.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\PlaneComponent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
