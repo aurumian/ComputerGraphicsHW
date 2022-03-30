@@ -56,9 +56,16 @@ Vector3 Rotator::GetRightVector() const
 	return XMVector3Rotate(Vector3::Right, Quat);
 }
 
-void Rotator::RotateArounAxis(const Vector3& axis, float Angle)
+void Rotator::RotateAroundLocalAxis(const Vector3& axis, float Angle)
 {
 	Quat.Concatenate(Quat, DirectX::XMQuaternionRotationAxis(axis, Angle), Quat);
+}
+
+void Rotator::RotateAroundAxis(const Vector3& axis, float Angle)
+{
+	Quaternion q;
+	Quat.Inverse(q);
+	RotateAroundLocalAxis(DirectX::XMVector3Rotate(axis, q), Angle);
 }
 
 Quaternion Rotator::GetQuaterion() const

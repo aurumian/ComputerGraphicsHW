@@ -30,8 +30,11 @@ public:
 
 	Vector3 GetRightVector() const;
 
-	//// Adds angle degrees rotation around given axis
-	void RotateArounAxis(const Vector3& axis, float Angle);
+	// Adds angle degrees rotation around given axis
+	// the rotation is local in terms that axis is chosen as if your rotation is zeroed out
+	void RotateAroundLocalAxis(const Vector3& axis, float Angle);
+
+	void RotateAroundAxis(const Vector3& axis, float Angle);
 
 	Quaternion GetQuaterion() const;
 

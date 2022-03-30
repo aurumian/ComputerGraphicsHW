@@ -61,7 +61,7 @@ public:
 		{
 			const float deltaAngle = DeltaTime * RotSpeed;
 			const Vector3 upVec = GetParent()->mTransform.Rotation.GetUpVector();
-			GetParent()->mTransform.Rotation.RotateArounAxis(Vector3::Up, deltaAngle);
+			GetParent()->mTransform.Rotation.RotateAroundLocalAxis(Vector3::Up, deltaAngle);
 		}
 	}
 };

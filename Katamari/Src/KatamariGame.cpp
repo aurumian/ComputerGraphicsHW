@@ -8,6 +8,9 @@
 #include "InputDevice.h"
 #include "PlaneComponent.h"
 
+#include <iostream>
+using namespace std;
+
 void KatamariGame::PrepareResources()
 {
 	Game::PrepareResources();
@@ -64,7 +67,7 @@ void KatamariGame::PrepareResources()
 	mr->SetColor(Color(0.0f, 0.0f, 1.0f, 1.0f));
 	mr->SetVertexShader(vs);
 	mr->SetMesh(sphereMesh);
-	mr->mTransform.Position.x = 1.0f;
+	mr->mTransform.Position.z = -1.0f;
 	mr->mTransform.Scale = Vector3::One * 0.2f;
 
 	PlaneComponent* pc = CreateGameComponent<PlaneComponent>();
@@ -95,8 +98,15 @@ void KatamariGame::Update(float DeltaTime)
 	{
 		movementDelta.y -= DeltaTime * Speed;
 	}
+	const float radius = 1.0f;
+	const float rotAngleX = -movementDelta.x / radius;
+	const float rotAngleY = -movementDelta.y / radius;
+	const Vector3 right = CurrentCamera->Transform.Rotation.GetRightVector();
+	Player->mTransform.Rotation.RotateAroundAxis(right, rotAngleX);
+	const Vector3 forward = right.Cross(Vector3::Up);
+	Player->mTransform.Rotation.RotateAroundAxis(forward, rotAngleY);
+	Player->mTransform.Position -= forward * movementDelta.x;
+	Player->mTransform.Position += right * movementDelta.y;
 
-	Player->mTransform.Rotation.RotateArounAxis(Vector3::Right, movementDelta.x);
-	Player->mTransform.Rotation.RotateArounAxis(Vector3::Up, movementDelta.y);
-
+	
 }
