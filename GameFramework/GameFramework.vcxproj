@@ -161,6 +161,7 @@
     <ClInclude Include="Include\DisplayWin32.h" />
     <ClInclude Include="Include\Game.h" />
     <ClInclude Include="Include\InputDevice.h" />
+    <ClInclude Include="Include\LineRenderer.h" />
     <ClInclude Include="Include\MathInclude.h" />
     <ClInclude Include="Include\Mesh.h" />
     <ClInclude Include="Include\MeshRenderer.h" />
@@ -173,7 +174,6 @@
     <ClInclude Include="Include\Transform.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Include\OrbitCameraController.cpp" />
     <ClCompile Include="Src\AABB2DCollider.cpp" />
     <ClCompile Include="Src\GameComponent.cpp" />
     <ClCompile Include="Src\Camera.cpp" />
@@ -182,8 +182,10 @@
     <ClCompile Include="Src\DisplayWin32.cpp" />
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\InputDevice.cpp" />
+    <ClCompile Include="Src\LineRenderer.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
     <ClCompile Include="Src\MeshRenderer.cpp" />
+    <ClCompile Include="Src\OrbitCameraController.cpp" />
     <ClCompile Include="Src\PlaneComponent.cpp" />
     <ClCompile Include="Src\Shader.cpp" />
     <ClCompile Include="Src\ShaderCompiler.cpp" />

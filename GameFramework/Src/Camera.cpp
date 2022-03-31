@@ -33,7 +33,7 @@ void Camera::UpdateFOV(float NewFOV)
 
 Matrix Camera::GetWorldToClipMatrix() const
 {
-	return GetProjectionMatrix() * GetViewMatrix();
+	return (GetProjectionMatrix() * GetViewMatrix());
 }
 
 float Camera::GetFOV() const

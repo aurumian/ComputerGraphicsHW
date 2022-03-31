@@ -1,14 +1,9 @@
-#include "MeshRenderer.h"
-
-#include "Game.h"
-
-#include <d3d11.h>
-
+#include "LineRenderer.h"
 #include "Shader.h"
 
-void MeshRenderer::Render()
+void LineRenderer::Render()
 {
-	if (mVertexShader == nullptr || mPixelShader == nullptr || Mesh == nullptr)
+	if (mVertexShader == nullptr || mPixelShader == nullptr || VertexBuffer.Get() == nullptr)
 	{
 		return;
 	}
@@ -17,7 +12,8 @@ void MeshRenderer::Render()
 
 	ComPtr<ID3D11DeviceContext> context = game->GetD3DDeviceContext();
 
-	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	const D3D_PRIMITIVE_TOPOLOGY topology = DrawAsStrip ? D3D_PRIMITIVE_TOPOLOGY_LINESTRIP : D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	context->IASetPrimitiveTopology(topology);
 
 	// todo: optimize rendering by 
 	// checking which shader is set now
@@ -32,17 +28,16 @@ void MeshRenderer::Render()
 
 	D3D11_MAPPED_SUBRESOURCE resource = {};
 	auto res = context->Map(game->GetPerObjectConstantBuffer().Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-	
+
 	memcpy(resource.pData, &cbData, sizeof(cbData));
 
 	context->Unmap(game->GetPerObjectConstantBuffer().Get(), 0);
 
-	// todo: move this to mesh?
-	UINT strides[] = { 32 };
+	UINT strides[] = { 16 };
 	UINT offsets[] = { 0 };
 
-	context->IASetIndexBuffer(Mesh->IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetVertexBuffers(0, 1, Mesh->VertexBuffer.GetAddressOf(), strides, offsets);
 
-	context->DrawIndexed(Mesh->indexCount, 0, 0);
+	context->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), strides, offsets);
+
+	context->Draw(numVerts, 0);
 }

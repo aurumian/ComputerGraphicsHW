@@ -52,6 +52,12 @@ protected:
 	ComPtr<ID3D11PixelShader> D3DShaderPointer;
 };
 
+class BasicVertexShader : public VertexShader
+{
+public:
+	virtual void Initialize();
+};
+
 // todo: move to a separate file
 class SimpleVertexShader : public VertexShader
 {

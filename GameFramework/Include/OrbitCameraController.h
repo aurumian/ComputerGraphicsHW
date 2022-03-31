@@ -18,7 +18,7 @@ public:
 
 private:
 
-	class Camera* Cam;
+	class Camera* Cam = nullptr;
 
 	float Pitch = 0.0f;
 	float Yaw = 0.0f;

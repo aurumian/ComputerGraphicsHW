@@ -37,6 +37,13 @@ void KatamariGame::PrepareResources()
 	PixelShader* psPlain = sc.CreateShader<PixelShader>();
 
 
+	sc.SetPathToShader(L"../../Shaders/BasicShader.hlsl");
+	sc.SetEntryPoint("PSMain");
+	PixelShader* basicPS = sc.CreateShader<PixelShader>();
+
+	sc.SetEntryPoint("VSMain");
+	sc.SetTarget("vs_5_0");
+	BasicVertexShader* basicVS = sc.CreateShader<BasicVertexShader>();
 
 	// Setup PerspCamera
 	CurrentCamera = new Camera();
@@ -49,7 +56,7 @@ void KatamariGame::PrepareResources()
 	Player = CreateGameComponent<GameComponent>();
 	orbitCC->GCToOrbit = Player;
 
-	MeshRenderer* playerMesh = Player->AddChildComponent<MeshRenderer>();
+	/*MeshRenderer* playerMesh = Player->AddChildComponent<MeshRenderer>();
 	playerMesh->SetPixelShader(ps);
 	playerMesh->SetVertexShader(vs);
 	playerMesh->SetMesh(sphereMesh);
@@ -68,11 +75,24 @@ void KatamariGame::PrepareResources()
 	mr->SetVertexShader(vs);
 	mr->SetMesh(sphereMesh);
 	mr->mTransform.Position.z = -1.0f;
-	mr->mTransform.Scale = Vector3::One * 0.2f;
+	mr->mTransform.Scale = Vector3::One * 0.2f;*/
+
+	/*LineCircle* lc = Player->AddChildComponent<LineCircle>();
+	lc->SetPixelShader(basicPS);
+	lc->SetVertexShader(basicVS);
+	lc->SetColor(Color(0.0f, 1.0f, 0.0f, 1.0f));*/
+
+	LineSphere* ls = Player->AddChildComponent<LineSphere>();
+	ls->SetPixelShader(basicPS);
+	ls->SetVertexShader(basicVS);
+	ls->SetColor(Color(0.0f, 1.0f, 0.0f, 1.0f));
+	
 
 	PlaneComponent* pc = CreateGameComponent<PlaneComponent>();
-	pc->SetPixelShader(ps);
-	pc->SetVertexShader(vs);
+	pc->SetPixelShader(basicPS);
+	pc->SetVertexShader(basicVS);
+	pc->SetColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+	
 	
 }
 

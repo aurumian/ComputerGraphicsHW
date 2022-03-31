@@ -45,6 +45,35 @@ void PixelShader::UseShader()
 	context->PSSetShader(D3DShaderPointer.Get(), nullptr, 0);
 }
 
+void BasicVertexShader::Initialize()
+{
+	VertexShader::Initialize();
+
+	D3D11_INPUT_ELEMENT_DESC inputElements[] =
+	{
+		D3D11_INPUT_ELEMENT_DESC
+		{
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32A32_FLOAT,
+			0,
+			0,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
+		}
+	};
+
+	ComPtr<ID3D11Device> device = Game::GetInstance()->GetD3DDevice();
+
+	device->CreateInputLayout(
+		inputElements,
+		1,
+		ByteCode->GetBufferPointer(),
+		ByteCode->GetBufferSize(),
+		InputLayout.GetAddressOf()
+	);
+}
+
 void SimpleVertexShader::Initialize()
 {
 	VertexShader::Initialize();

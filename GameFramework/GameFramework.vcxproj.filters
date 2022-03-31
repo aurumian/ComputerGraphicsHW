@@ -69,6 +69,9 @@
     <ClInclude Include="Include\PlaneComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Include\LineRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\AABB2DCollider.cpp">
@@ -110,13 +113,16 @@
     <ClCompile Include="Src\Collider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Include\OrbitCameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Src\SphereCollider.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="Src\PlaneComponent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\OrbitCameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LineRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

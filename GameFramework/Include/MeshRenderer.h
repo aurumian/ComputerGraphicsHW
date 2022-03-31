@@ -14,12 +14,9 @@ public:
 
 	virtual void Render() override;
 
-	void SetColor(XMFLOAT4 InColor);
-
 private:
 	Mesh* Mesh = nullptr;
 
-	// todo: move to a material
-	Color Color;
+
 };
 

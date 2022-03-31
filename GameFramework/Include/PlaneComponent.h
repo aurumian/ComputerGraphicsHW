@@ -1,18 +1,11 @@
 #pragma once
 
-#include "Renderer.h"
+#include "LineRenderer.h"
 #include <vector>
 
-class PlaneComponent : public Renderer
+class PlaneComponent : public LineRenderer
 {
 public:
 	PlaneComponent();
 
-	virtual void Render() override;
-
-protected:
-	ComPtr<ID3D11Buffer> VertexBuffer;
-	//ID3D11Buffer* VertexBuffer;
-
-	int numVerts;
 };
