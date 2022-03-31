@@ -33,7 +33,7 @@ void LineRenderer::Render()
 
 	context->Unmap(game->GetPerObjectConstantBuffer().Get(), 0);
 
-	UINT strides[] = { 16 };
+	UINT strides[] = { 12 };
 	UINT offsets[] = { 0 };
 
 

@@ -18,20 +18,20 @@ PlaneComponent::PlaneComponent()
 			const int gridSize = 20;
 			const float distBetweenLines = 4.0f;
 			const float farthestCoord = gridSize / 2.0f * distBetweenLines;
-			std::vector<Vector4> points;
+			std::vector<Vector3> points;
 			for (int i = 0; i <= gridSize; ++i)
 			{
 				// Add vertical line
-				points.push_back(Vector4(i * distBetweenLines - farthestCoord, 0.0f, -farthestCoord, 1.0f));
-				points.push_back(Vector4(i * distBetweenLines - farthestCoord, 0.0f, farthestCoord, 1.0f));
+				points.push_back(Vector3(i * distBetweenLines - farthestCoord, 0.0f, -farthestCoord));
+				points.push_back(Vector3(i * distBetweenLines - farthestCoord, 0.0f, farthestCoord));
 			}
 
 			// Add horizontal lines
 			for (int i = 0; i <= gridSize; ++i)
 			{
 				// add vertical line
-				points.push_back(Vector4(-farthestCoord, 0.0f, i * distBetweenLines - farthestCoord, 1.0f));
-				points.push_back(Vector4(farthestCoord, 0.0f, i * distBetweenLines - farthestCoord, 1.0f));
+				points.push_back(Vector3(-farthestCoord, 0.0f, i * distBetweenLines - farthestCoord));
+				points.push_back(Vector3(farthestCoord, 0.0f, i * distBetweenLines - farthestCoord));
 			}
 
 			D3D11_BUFFER_DESC vertexBufDesc = {};

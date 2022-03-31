@@ -32,14 +32,14 @@ public:
 
 			ConstrStatic()
 			{
-				std::vector<Vector4> points;
+				std::vector<Vector3> points;
 
 				int numPoints = 20;
 				const float deltaAlpha = XM_2PI / static_cast<float>(numPoints);
 				for (int i = 0; i <= numPoints; ++i)
 				{
 					const float alpha = deltaAlpha * i;
-					points.push_back(XMFLOAT4(cosf(alpha), 0.0f, sinf(alpha), 1.0f));
+					points.push_back(Vector3(cosf(alpha), 0.0f, sinf(alpha)));
 				}
 
 				D3D11_BUFFER_DESC vertexBufDesc = {};
@@ -86,19 +86,19 @@ public:
 
 			ConstrStatic()
 			{
-				std::vector<Vector4> points;
+				std::vector<Vector3> points;
 
 				int numPoints = 20;
 				const float deltaAlpha = XM_2PI / static_cast<float>(numPoints);
 				for (int i = 0; i <= numPoints; ++i)
 				{
 					const float alpha = deltaAlpha * i - XM_PIDIV2;
-					points.push_back(Vector4(cosf(alpha), 0.0f, sinf(alpha), 1.0f));
+					points.push_back(Vector3(cosf(alpha), 0.0f, sinf(alpha)));
 				}
 				for (int i = 0; i <= numPoints; ++i)
 				{
 					const float alpha = deltaAlpha * i - XM_PIDIV2;
-					points.push_back(Vector4(0.0f, cosf(alpha), sinf(alpha), 1.0f));
+					points.push_back(Vector3(0.0f, cosf(alpha), sinf(alpha)));
 				}
 
 				D3D11_BUFFER_DESC vertexBufDesc = {};
