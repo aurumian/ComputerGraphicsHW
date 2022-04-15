@@ -83,10 +83,16 @@ public:
 
 	virtual void Update(float DeltaTime) override
 	{
+		static float mult = 1.0f;
 		if (GetParent() != nullptr)
 		{
 			const float time = Game::GetInstance()->GetTotalElapsedTime();
 			GetParent()->mTransform.Position = Vector3(0.0f, sinf(Phase + time * Speed) * Amplitude, 0.0f);
+			/*GetParent()->mTransform.Position.y += DeltaTime * Speed * mult;
+			if (fabs(GetParent()->mTransform.Position.y) > Amplitude)
+			{
+				mult *= -1.0f;
+			}*/
 		}
 	}
 };
@@ -105,6 +111,10 @@ private:
 	class SimpleVertexShader* vs;
 	class PixelShader* ps;
 	class PixelShader* psPlain;
+
+	class MeshProxy* boxMeshProxy;
+	class MeshProxy* circleMeshProxy;
+	class MeshProxy* sphereMeshProxy;
 
 	class Camera* PerspCamera;
 	class Camera* OrthoCamera;

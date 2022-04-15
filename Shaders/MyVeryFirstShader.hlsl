@@ -1,6 +1,6 @@
 struct VS_IN
 {
-	float4 pos : POSITION0;
+	float3 pos : POSITION0;
 	float4 col : COLOR0;
 };
 
@@ -29,7 +29,7 @@ PS_IN VSMain(VS_IN input)
 	matrix objectToClip = mul(ObjectToWorld, WorldToClip);
 	//output.pos = mul(mul(input.pos, ObjectToWorld), WorldToClip);
 	//output.pos = mul(mul(input.pos, WorldToClip),ObjectToWorld);
-	output.pos = mul(input.pos, objectToClip);
+	output.pos = mul(float4(input.pos, 1.0f), objectToClip);
 	//output.pos = mul(objectToClip, input.pos);
 
 	//output.pos = input.pos;

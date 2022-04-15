@@ -1,43 +1,57 @@
 #include "Mesh.h"
 
 #include "Game.h"
+#include "MeshProxy.h"
 
-#include <DirectXMath.h>
-
-using namespace DirectX;
-
-void Mesh::Initialize(XMFLOAT4* Points, size_t NumPoints, int* Indices, size_t NumIndices)
+MeshProxy* ColoredMesh::CreateMeshProxy()
 {
-	indexCount = static_cast<int>(NumIndices);
+	MeshProxy* meshProxy = new MeshProxy();
 
-	D3D11_BUFFER_DESC vertexBufDesc = {};
-	vertexBufDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufDesc.CPUAccessFlags = 0;
-	vertexBufDesc.MiscFlags = 0;
-	vertexBufDesc.StructureByteStride = 0;
-	vertexBufDesc.ByteWidth = sizeof(Points[0]) * static_cast<UINT>(NumPoints);
+	meshProxy->Initialize(&Vertices[0], Vertices.size(),  sizeof(Vertex),  &Indices[0], Indices.size());
 
-	D3D11_SUBRESOURCE_DATA vertexData = {};
-	vertexData.pSysMem = Points;
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
+	return meshProxy;
+}
 
-	ComPtr<ID3D11Device> device = Game::GetInstance()->GetD3DDevice();
-	device->CreateBuffer(&vertexBufDesc, &vertexData, VertexBuffer.GetAddressOf());
+UINT ColoredMesh::AddVertex(const Vertex& InVertex)
+{
+	Vertices.push_back(InVertex);
+	return static_cast<UINT>(Vertices.size() - 1);
+}
 
-	D3D11_BUFFER_DESC indexBufDesc = {};
-	indexBufDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufDesc.CPUAccessFlags = 0;
-	indexBufDesc.MiscFlags = 0;
-	indexBufDesc.StructureByteStride = 0;
-	indexBufDesc.ByteWidth = sizeof(Indices[0]) * static_cast<UINT>(NumIndices);
 
-	D3D11_SUBRESOURCE_DATA indexData = {};
-	indexData.pSysMem = Indices;
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
+void ColoredMesh::AddIndex(UINT InIndex)
+{
+	Indices.push_back(InIndex);
+}
 
-	device->CreateBuffer(&indexBufDesc, &indexData, IndexBuffer.GetAddressOf());
+void ColoredMesh::AddFace(UINT I1, UINT I2, UINT I3)
+{
+	Indices.push_back(I1);
+	Indices.push_back(I2);
+	Indices.push_back(I3);
+}
+
+MeshProxy* TexturedMesh::CreateMeshProxy()
+{
+	MeshProxy* meshProxy = new MeshProxy();
+
+	meshProxy->Initialize(&Vertices[0], Vertices.size(), sizeof(Vertex), &Indices[0], Indices.size());
+
+	return meshProxy;
+}
+
+UINT TexturedMesh::AddVertex(const Vertex& InVertex)
+{
+	Vertices.push_back(InVertex);
+	return static_cast<UINT>(Vertices.size() - 1);
+}
+
+void TexturedMesh::AddIndex(UINT InIndex)
+{
+	Indices.push_back(InIndex);
+}
+
+TexturedMesh::Vertex& TexturedMesh::GetVertex(size_t index)
+{
+	return Vertices[index];
 }

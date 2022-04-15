@@ -6,123 +6,158 @@
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
 
-namespace DirectX
-{
-	struct XMFLOAT4;
-}
+#include <vector>
+
+#include "MathInclude.h"
 
 class Mesh
 {
-	friend class MeshRenderer;
-
 public:
+	/*
+	* Allocates MeshProxy on the heap and expects the calling code to take ownership of it
+	* todo: use some smart pointer ?
+	*/
+	virtual class MeshProxy* CreateMeshProxy() = 0;
 
-	void Initialize(struct DirectX::XMFLOAT4* Points, size_t NumPoints, int* Indices, size_t NumIndices);
+	virtual ~Mesh() = default;
+};
 
-	// todo: add check for initialization
-	// mb: i should move buffers to MeshRenderer
 
-	int indexCount = 0;
+/*
+* Mesh that has position and color vertex data
+*/
+class ColoredMesh : public Mesh
+{
+public:
+#pragma pack(push, 4)
+	struct Vertex
+	{
+		Vector3 Position;
+		Color Color;
+	};
+#pragma pack (pop)
+
+	virtual class MeshProxy* CreateMeshProxy() override;
+
+	// returns the index of the inserted vertex
+	UINT AddVertex(const Vertex& InVertex);
+	void AddIndex(UINT InIndex);
+
+	void AddFace(UINT I1, UINT I2, UINT I3);
 
 protected:
+	std::vector<Vertex> Vertices;
 
-	ComPtr<ID3D11Buffer> VertexBuffer;
-	ComPtr<ID3D11Buffer> IndexBuffer;
-	
+	std::vector<UINT> Indices;
+};
 
+
+/*
+* Mesh that has position, normal and uv coordinates vertex data
+*/
+class TexturedMesh : public Mesh
+{
+public:
+
+	struct Vertex
+	{
+		Vector3 Position;
+		Vector3 Normal;
+		Vector2 TexCoord;
+	};
+
+	virtual class MeshProxy* CreateMeshProxy() override;
+
+	// todo move to templated base class
+	// returns the index of the inserted vertex
+	UINT AddVertex(const Vertex& InVertex);
+	void AddIndex(UINT InIndex);
+
+	Vertex& GetVertex(size_t index);
+
+protected:
+	std::vector<Vertex> Vertices;
+
+	std::vector<UINT> Indices;
 };
 
 // todo: move to PongMeshes.h and PongMeshes.cpp files
 #include <DirectXMath.h>
 #include <xutility>
 using namespace DirectX;
-class SquareMesh : public Mesh
+class SquareMesh : public ColoredMesh
 {
 public:
 	SquareMesh()
 	{
-		XMFLOAT4 points[8] =
-		{
-			XMFLOAT4(1.0f, 1.0f, 0.5f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
-			XMFLOAT4(-1.0f, -1.0f, 0.5f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
-			XMFLOAT4(1.0f, -1.0f, 0.5f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
-			XMFLOAT4(-1.0f, 1.0f, 0.5f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)
-		};
+		AddVertex({ Vector3(1.0f, 1.0f, 0.5f), Vector4(1.0f, 0.0f, 0.0f, 1.0f) });
+		AddVertex({ Vector3(-1.0f, -1.0f, 0.5f), Vector4(0.0f, 0.0f, 1.0f, 1.0f) });
+		AddVertex({ Vector3(.0f, -1.0f, 0.5f), Vector4(0.0f, 1.0f, 0.0f, 1.0f) });
+		AddVertex({ Vector3(-1.0f, 1.0f, 0.5f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
 
-		int indices[] = { 0, 1, 2, 1, 0, 3 };
-
-		Initialize(points, std::size(points), indices, std::size(indices));
+		AddIndex(0);
+		AddIndex(1);
+		AddIndex(2);
+		AddIndex(1);
+		AddIndex(0);
+		AddIndex(3);
 	}
 };
 
 #include <vector>
-class CircleMesh : public Mesh
+class CircleMesh : public ColoredMesh
 {
 public:
 	CircleMesh()
 	{
 
-		std::vector<XMFLOAT4> points;
-		std::vector<int> indices;
-		points.push_back({ 0.0f, 0.0f, 0.0f, 1.0f });
-		points.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+		AddVertex({ Vector3(0.0f, 0.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
 
 		int numPoints = 20;
 		int i = 1;
 		for (float alpha = 0.0f; alpha < 6.28f; alpha += 6.28f / numPoints, ++i)
 		{
-			XMFLOAT4 point = XMFLOAT4(cosf(alpha), sinf(alpha), 0.0f, 1.0f);
-			points.push_back(point);
-			points.push_back(XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f));
+			const Vector3 point = Vector3(cosf(alpha), sinf(alpha), 0.0f);
+			AddVertex({ point, Vector4(1.0f, 0.5f, 0.5f, 1.0f) });
 
-			indices.push_back(0);
-			indices.push_back(i);
-			indices.push_back((i % numPoints) + 1);
+			AddIndex(0);
+			AddIndex(i);
+			AddIndex((i % numPoints) + 1);
 		}
-
-		Initialize(&points[0], points.size(), &indices[0], indices.size());
 	}
 };
 
-class BoxMesh : public Mesh
+class BoxMesh : public ColoredMesh
 {
 public:
 	BoxMesh()
 	{
-		XMFLOAT4 points[16] =
-		{
-			XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),		// 0
-			XMFLOAT4(-0.5f, -0.5f, 0.5f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),	// 1
-			XMFLOAT4(0.5f, -0.5f, 0.5f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	// 2
-			XMFLOAT4(-0.5f, 0.5f, 0.5f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),	// 3
-			XMFLOAT4(0.5f, 0.5f, -0.5f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),	// 4
-			XMFLOAT4(-0.5f, -0.5f, -0.5f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),	// 5
-			XMFLOAT4(0.5f, -0.5f, -0.5f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),	// 6
-			XMFLOAT4(-0.5f, 0.5f, -0.5f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),	// 7
-		};
+		AddVertex({ Vector3(0.5f, 0.5f, 0.5f),    Color(1.0f, 0.0f, 0.0f, 1.0f) }); // 0
+		AddVertex({ Vector3(-0.5f, -0.5f, 0.5f),  Color(0.0f, 0.0f, 1.0f, 1.0f) }); // 1
+		AddVertex({ Vector3(0.5f, -0.5f, 0.5f),   Color(0.0f, 1.0f, 0.0f, 1.0f) }); // 2
+		AddVertex({ Vector3(-0.5f, 0.5f, 0.5f),   Color(1.0f, 1.0f, 1.0f, 1.0f) }); // 3
+		AddVertex({ Vector3(0.5f, 0.5f, -0.5f),   Color(1.0f, 0.0f, 0.0f, 1.0f) }); // 4
+		AddVertex({ Vector3(-0.5f, -0.5f, -0.5f), Color(0.0f, 0.0f, 1.0f, 1.0f) }); // 5
+		AddVertex({ Vector3(0.5f, -0.5f, -0.5f),  Color(0.0f, 1.0f, 0.0f, 1.0f) }); // 6
+		AddVertex({ Vector3(-0.5f, 0.5f, -0.5f),  Color(1.0f, 1.0f, 1.0f, 1.0f) }); // 7
 
-		int indices[] = 
-		{ 
-			0, 1, 2, 
-			1, 0, 3, 
-			4, 5, 6,
-			5, 4, 7,
-			4, 0, 2,
-			4, 2, 6,
-			7, 5, 1,
-			7, 1, 3,
-			4, 0, 3,
-			4, 3, 7,
-			6, 1, 2,
-			6, 5, 1
-		};
-
-		Initialize(points, std::size(points), indices, std::size(indices));
+		AddFace(0, 1, 2);
+		AddFace(1, 0, 3);
+		AddFace(4, 5 ,6);
+		AddFace(5, 4, 7);
+		AddFace(4, 0, 2);
+		AddFace(4, 2, 6);
+		AddFace(7, 5, 1);
+		AddFace(7, 1, 3);
+		AddFace(4, 0, 3);
+		AddFace(4, 3, 7);
+		AddFace(6, 1, 2);
+		AddFace(6, 5, 1);
 	}
 };
 
 #include "MathInclude.h"
-class SphereMesh : public Mesh
+class SphereMesh : public ColoredMesh
 {
 public:
 	SphereMesh()
@@ -131,15 +166,13 @@ public:
 		const int numPointsHor = 50;
 
 #pragma region GeneratePoints
-		std::vector<Vector4> points;
 		// Generate north pole point
-		points.push_back({ 0.0f, 1.0f, 0.0f, 1.0f });
-		points.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+		AddVertex({ Vector3(0.0f, 1.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
 
+		// Generate lattitude points
 		const float phetaDelta = XM_PI / (numPointsVert + 1);
 		for (int j = 0; j < numPointsVert; ++j)
 		{
-			// Generate current circle points
 			const float pheta = XM_PIDIV2 - phetaDelta * (j + 1);
 			const float y = sinf(pheta);
 			const float deltaAlpha = XM_2PI / static_cast<float>(numPointsHor);
@@ -147,24 +180,21 @@ public:
 			for (int i = 0; i < numPointsHor; ++i)
 			{
 				const float alpha = deltaAlpha * i;
-				points.push_back(XMFLOAT4(curRadius * cosf(alpha), y, curRadius * sinf(alpha), 1.0f));
-				points.push_back(XMFLOAT4(1.0f, 0.5f, 0.5f, 1.0f));
+				const Vector3 position = Vector3(curRadius * cosf(alpha), y, curRadius * sinf(alpha));
+				const Color color = Color(1.0f, 0.5f, 0.5f, 1.0f);
+				AddVertex({ position, color });
 			}
 		}
 
 		// Generate south pole point
-		points.push_back({ 0.0f, -1.0f, 0.0f, 1.0f });
-		points.push_back({ 1.0f, 1.0f, 1.0f, 1.0f });
+		AddVertex({ Vector3(0.0f, -1.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
 #pragma endregion GeneratePoints
 
 #pragma region CreateTriangleIndices
-		std::vector<int> indices;
 		// Connect the first circle to the north pole
 		for (int i = 1; i <= numPointsHor; ++i)
 		{
-			indices.push_back(0);
-			indices.push_back(i);
-			indices.push_back((i % numPointsHor) + 1);
+			AddFace(0, i, (i % numPointsHor) + 1);
 		}
 		// Connect the intermediate circles to each other
 		for (int j = 1; j < numPointsVert; ++j)
@@ -175,25 +205,22 @@ public:
 				{
 					const int circlePoint1 = i;
 					const int circlePoint2 = (i % numPointsHor) + 1;
-					indices.push_back(prevOffset + circlePoint2);
-					indices.push_back(prevOffset + circlePoint1);
-					indices.push_back(curOffset + circlePoint1);
-					indices.push_back(curOffset + circlePoint1);
-					indices.push_back(curOffset + circlePoint2);
-					indices.push_back(prevOffset + circlePoint2);
+					AddIndex(prevOffset + circlePoint2);
+					AddIndex(prevOffset + circlePoint1);
+					AddIndex(curOffset + circlePoint1);
+					AddIndex(curOffset + circlePoint1);
+					AddIndex(curOffset + circlePoint2);
+					AddIndex(prevOffset + circlePoint2);
 				}
 		}
 		// Connect the last circle to the south pole
 		const int offset = (numPointsVert - 1) * numPointsHor;
 		for (int i = 1; i <= numPointsHor; ++i)
 		{
-			indices.push_back(offset + i);
-			indices.push_back(offset + (i % numPointsHor) + 1);
-			indices.push_back(numPointsHor * numPointsVert + 1);
+			AddIndex(offset + i);
+			AddIndex(offset + (i % numPointsHor) + 1);
+			AddIndex(numPointsHor * numPointsVert + 1);
 		}
 #pragma endregion CreateTriangleIndices
-		
-
-		Initialize(&points[0], points.size(), &indices[0], indices.size());
 	}
 };

@@ -1,14 +1,19 @@
 #include "MeshRenderer.h"
 
 #include "Game.h"
+#include "Shader.h"
+#include "MeshProxy.h"
 
 #include <d3d11.h>
 
-#include "Shader.h"
+void MeshRenderer::SetMeshProxy(MeshProxy* InMeshProxy)
+{
+	mMeshProxy = InMeshProxy;
+}
 
 void MeshRenderer::Render()
 {
-	if (mVertexShader == nullptr || mPixelShader == nullptr || Mesh == nullptr)
+	if (mVertexShader == nullptr || mPixelShader == nullptr || mMeshProxy == nullptr)
 	{
 		return;
 	}
@@ -37,12 +42,8 @@ void MeshRenderer::Render()
 
 	context->Unmap(game->GetPerObjectConstantBuffer().Get(), 0);
 
-	// todo: move this to mesh?
-	UINT strides[] = { 32 };
-	UINT offsets[] = { 0 };
+	context->IASetIndexBuffer(mMeshProxy->GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
+	context->IASetVertexBuffers(0, 1, mMeshProxy->GetVertexBuffer().GetAddressOf(), mMeshProxy->GetStrides(), mMeshProxy->GetOffsets());
 
-	context->IASetIndexBuffer(Mesh->IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	context->IASetVertexBuffers(0, 1, Mesh->VertexBuffer.GetAddressOf(), strides, offsets);
-
-	context->DrawIndexed(Mesh->indexCount, 0, 0);
+	context->DrawIndexed(mMeshProxy->GetNumIndices(), 0, 0);
 }

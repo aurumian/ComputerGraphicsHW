@@ -14,8 +14,11 @@ void HW2Game::PrepareResources()
 	Game::PrepareResources();
 	// create meshes
 	boxMesh = new BoxMesh();
+	boxMeshProxy = boxMesh->CreateMeshProxy();
 	circleMesh = new CircleMesh();
+	circleMeshProxy = circleMesh->CreateMeshProxy();
 	sphereMesh = new SphereMesh();
+	sphereMeshProxy = sphereMesh->CreateMeshProxy();
 
 
 	// create shaders
@@ -52,14 +55,14 @@ void HW2Game::PrepareResources()
 
 
 	MeshRenderer* box = CreateGameComponent<MeshRenderer>();
-	box->SetMesh(boxMesh);
+	box->SetMeshProxy(boxMeshProxy);
 	box->SetVertexShader(vs);
 	box->SetPixelShader(ps);
 	box->mTransform.Rotation.SetEulerAngles(0.0f, 0.0f, 30.0f);
 	box->mTransform.Position.x = 3.0f;
 
 	MeshRenderer* box2 = CreateGameComponent<MeshRenderer>();
-	box2->SetMesh(boxMesh);
+	box2->SetMeshProxy(boxMeshProxy);
 	box2->SetVertexShader(vs);
 	box2->SetPixelShader(ps);
 	RotateAroundActorComponent* raac = box2->AddChildComponent<RotateAroundActorComponent>();
@@ -68,7 +71,7 @@ void HW2Game::PrepareResources()
 	raac->Scale = Vector3::One * 0.5f;
 
 	MeshRenderer* box3 = CreateGameComponent<MeshRenderer>();
-	box3->SetMesh(boxMesh);
+	box3->SetMeshProxy(boxMeshProxy);
 	box3->SetVertexShader(vs);
 	box3->SetPixelShader(ps);
 	raac = box3->AddChildComponent<RotateAroundActorComponent>();
@@ -76,7 +79,7 @@ void HW2Game::PrepareResources()
 	raac->Scale = Vector3::One * 0.5f;
 
 	MeshRenderer* box4 = CreateGameComponent<MeshRenderer>();
-	box4->SetMesh(boxMesh);
+	box4->SetMeshProxy(boxMeshProxy);
 	box4->SetVertexShader(vs);
 	box4->SetPixelShader(ps);
 	box4->mTransform.Rotation.SetEulerAngles(0.0f, 0.0f, -30.0f);
@@ -84,7 +87,7 @@ void HW2Game::PrepareResources()
 	box4->AddChildComponent<RotatingComponent>();
 
 	MeshRenderer* box5 = box4->AddChildComponent<MeshRenderer>();
-	box5->SetMesh(boxMesh);
+	box5->SetMeshProxy(boxMeshProxy);
 	box5->SetVertexShader(vs);
 	box5->SetPixelShader(ps);
 	box5->mTransform.Position.z = 2.0f;
@@ -92,7 +95,7 @@ void HW2Game::PrepareResources()
 	box5->AddChildComponent<RotatingComponent>();
 
 	MeshRenderer* box6 = box5->AddChildComponent<MeshRenderer>();
-	box6->SetMesh(boxMesh);
+	box6->SetMeshProxy(boxMeshProxy);
 	box6->SetVertexShader(vs);
 	box6->SetPixelShader(ps);
 	box6->mTransform.Position.z = 2.0f;
@@ -100,7 +103,7 @@ void HW2Game::PrepareResources()
 	box6->AddChildComponent<RotatingComponent>();
 
 	MeshRenderer* box7 = box6->AddChildComponent<MeshRenderer>();
-	box7->SetMesh(boxMesh);
+	box7->SetMeshProxy(boxMeshProxy);
 	box7->SetVertexShader(vs);
 	box7->SetPixelShader(ps);
 	box7->mTransform.Position.z = 2.0f;
@@ -111,7 +114,7 @@ void HW2Game::PrepareResources()
 	// todo add debug circles for orbits
 
 	MeshRenderer* sphere1 = CreateGameComponent<MeshRenderer>();
-	sphere1->SetMesh(sphereMesh);
+	sphere1->SetMeshProxy(sphereMeshProxy);
 	sphere1->SetVertexShader(vs);
 	sphere1->SetPixelShader(ps);
 	sphere1->mTransform.Position.y = 2.0f;
@@ -136,7 +139,7 @@ void HW2Game::PrepareResources()
 			gc->mTransform.Position = Vector3(i * horDist, 0.0f, -j * verDist);
 
 			MeshRenderer* sphere = gc->AddChildComponent<MeshRenderer>();
-			sphere->SetMesh(sphereMesh);
+			sphere->SetMeshProxy(sphereMeshProxy);
 			sphere->SetVertexShader(vs);
 			sphere->SetPixelShader(psPlain);
 			const Color sphereColor = Color(0.0f, static_cast<float>((i + 1)) / numSpheres, static_cast<float>((j + 1)) / numSpheres, 1.0f);

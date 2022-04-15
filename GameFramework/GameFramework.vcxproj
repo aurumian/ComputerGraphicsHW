@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)Include;$(SolutionDir)DirectXTK\Include</AdditionalIncludeDirectories>
@@ -164,6 +164,8 @@
     <ClInclude Include="Include\LineRenderer.h" />
     <ClInclude Include="Include\MathInclude.h" />
     <ClInclude Include="Include\Mesh.h" />
+    <ClInclude Include="Include\MeshLoader.h" />
+    <ClInclude Include="Include\MeshProxy.h" />
     <ClInclude Include="Include\MeshRenderer.h" />
     <ClInclude Include="Include\OrbitCameraController.h" />
     <ClInclude Include="Include\PlaneComponent.h" />
@@ -184,6 +186,8 @@
     <ClCompile Include="Src\InputDevice.cpp" />
     <ClCompile Include="Src\LineRenderer.cpp" />
     <ClCompile Include="Src\Mesh.cpp" />
+    <ClCompile Include="Src\MeshLoader.cpp" />
+    <ClCompile Include="Src\MeshProxy.cpp" />
     <ClCompile Include="Src\MeshRenderer.cpp" />
     <ClCompile Include="Src\OrbitCameraController.cpp" />
     <ClCompile Include="Src\PlaneComponent.cpp" />
