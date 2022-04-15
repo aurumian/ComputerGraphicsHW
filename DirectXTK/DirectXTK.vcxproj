@@ -19,15 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Include\DDSTextureLoader.h" />
+    <ClInclude Include="Include\DirectXHelpers.h" />
+    <ClInclude Include="Include\Effects.h" />
     <ClInclude Include="Include\SimpleMath.h" />
+    <ClInclude Include="Include\WICTextureLoader.h" />
+    <ClInclude Include="Src\DDS.h" />
+    <ClInclude Include="Src\LoaderHelpers.h" />
     <ClInclude Include="Src\pch.h" />
+    <ClInclude Include="Src\PlatformHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Include\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="Src\DirectXHelpers.cpp" />
     <ClCompile Include="Src\pch.cpp" />
     <ClCompile Include="Src\SimpleMath.cpp" />
+    <ClCompile Include="Src\WICTextureLoader.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
