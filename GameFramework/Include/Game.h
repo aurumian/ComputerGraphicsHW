@@ -115,6 +115,10 @@ public:
 
 	const Camera& GetCurrentCamera();
 
+	ComPtr<ID3D11SamplerState> GetDefaultSamplerState() { return DefaultSamplerState; }
+
+	void DestroyComponent(GameComponent* GC);
+
 protected:
 
 	Game();
@@ -132,6 +136,8 @@ protected:
 
 	ComPtr<ID3D11DepthStencilState> pDSState = nullptr;
 	ComPtr<ID3D11DepthStencilView> DepthStencilView = nullptr;
+
+	ComPtr<ID3D11SamplerState> DefaultSamplerState = nullptr;
 
 private:
 

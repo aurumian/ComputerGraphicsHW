@@ -64,3 +64,9 @@ class SimpleVertexShader : public VertexShader
 public:
 	virtual void Initialize();
 };
+
+class TexturedVertexShader : public VertexShader
+{
+public:
+	virtual void Initialize();
+};

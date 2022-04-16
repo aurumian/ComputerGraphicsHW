@@ -38,7 +38,7 @@ TexturedMesh MeshLoader::GetMesh(size_t meshIndex)
 	if (mesh->mTextureCoords != nullptr) {
 		for (size_t i = 0; i < mesh->mNumVertices; ++i) {
 			res.GetVertex(i).TexCoord.x = mesh->mTextureCoords[0][i].x;
-			res.GetVertex(i).TexCoord.x = mesh->mTextureCoords[0][i].y;
+			res.GetVertex(i).TexCoord.y = 1.0f - mesh->mTextureCoords[0][i].y;
 		}
 	}
 

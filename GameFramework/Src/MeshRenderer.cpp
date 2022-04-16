@@ -11,6 +11,11 @@ void MeshRenderer::SetMeshProxy(MeshProxy* InMeshProxy)
 	mMeshProxy = InMeshProxy;
 }
 
+void MeshRenderer::SetAlbedoSRV(ComPtr<ID3D11ShaderResourceView> InAlbedoSRV)
+{
+	mAlbedoSRV = InAlbedoSRV;
+}
+
 void MeshRenderer::Render()
 {
 	if (mVertexShader == nullptr || mPixelShader == nullptr || mMeshProxy == nullptr)
@@ -21,6 +26,7 @@ void MeshRenderer::Render()
 	Game* game = Game::GetInstance();
 
 	ComPtr<ID3D11DeviceContext> context = game->GetD3DDeviceContext();
+	ComPtr<ID3D11SamplerState> defaultSamplerState = game->GetDefaultSamplerState();
 
 	context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -44,6 +50,13 @@ void MeshRenderer::Render()
 
 	context->IASetIndexBuffer(mMeshProxy->GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetVertexBuffers(0, 1, mMeshProxy->GetVertexBuffer().GetAddressOf(), mMeshProxy->GetStrides(), mMeshProxy->GetOffsets());
+
+	// Textures
+	if (mAlbedoSRV.Get() != nullptr)
+	{
+		context->PSSetShaderResources(0, 1, mAlbedoSRV.GetAddressOf());
+		context->PSSetSamplers(0, 1, defaultSamplerState.GetAddressOf());
+	}
 
 	context->DrawIndexed(mMeshProxy->GetNumIndices(), 0, 0);
 }

@@ -104,6 +104,25 @@ public:
 	}
 };
 
+class TexturedSquareMesh : public TexturedMesh
+{
+public:
+	TexturedSquareMesh()
+	{
+		AddVertex({ Vector3( 1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(1.0f, 0.0f) });
+		AddVertex({ Vector3(-1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(0.0f, 1.0f) });
+		AddVertex({ Vector3( 1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(1.0f, 1.0f) });
+		AddVertex({ Vector3(-1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(0.0f, 0.0f) });
+
+		AddIndex(0);
+		AddIndex(1);
+		AddIndex(2);
+		AddIndex(1);
+		AddIndex(0);
+		AddIndex(3);
+	}
+};
+
 #include <vector>
 class CircleMesh : public ColoredMesh
 {

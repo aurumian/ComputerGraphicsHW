@@ -164,6 +164,19 @@ void Game::CreateBackBuffer()
 		nullptr, // Depth stencil desc
 		DepthStencilView.GetAddressOf());  // [out] Depth stencil view
 
+
+	// Create default sampler state
+	D3D11_SAMPLER_DESC sampDesc;
+	ZeroMemory(&sampDesc, sizeof(sampDesc));
+	sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampDesc.MinLOD = 0;
+	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	GetD3DDevice()->CreateSamplerState(&sampDesc, DefaultSamplerState.GetAddressOf());
 }
 
 void Game::Run()
@@ -354,6 +367,36 @@ const Camera& Game::GetCurrentCamera()
 	}
 
 	return *CurrentCamera;
+}
+
+void Game::DestroyComponent(GameComponent* GC)
+{
+	if (GC == nullptr)
+	{
+		return;
+	}
+
+	GC->SetParent(nullptr);
+	for (GameComponent* gc : GC->Children)
+	{
+		if (gc != nullptr)
+		{
+			gc->SetParent(nullptr);
+		}
+	}
+
+	GameComponents.erase(remove(GameComponents.begin(), GameComponents.end(), GC), GameComponents.end());
+	
+	if (Collider* col = dynamic_cast<Collider*>(GC))
+	{
+		Colliders.erase(remove(Colliders.begin(), Colliders.end(), col), Colliders.end());
+	}
+	else if (Renderer* rend = dynamic_cast<Renderer*>(GC))
+	{
+		Renderers.erase(remove(Renderers.begin(), Renderers.end(), rend), Renderers.end());
+	}
+
+	delete GC;
 }
 
 Game::Game()
