@@ -39,7 +39,7 @@ LRESULT InputDevice::HandleMessage(HWND hwnd, UINT umessage, WPARAM wparam, LPAR
 		MouseMoveDeltaY = (PrevPosY - posY) / static_cast<float>(disp->GetClientHeight());
 		PrevPosX = posX;
 		PrevPosY = posY;
-		break;
+		return 0;
 	}
 	default:
 		return DefWindowProc(hwnd, umessage, wparam, lparam);
