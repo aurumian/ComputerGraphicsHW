@@ -29,7 +29,22 @@ public:
 		return Game::GetInstance()->CreateGameComponent<T>(this);
 	}
 
+	template<class T>
+	T* GetComponentInParent()
+	{
+		GameComponent* comp = Parent;
+		while (comp != nullptr)
+		{
+			if (T* res = dynamic_cast<T*>(comp))
+			{
+				return res;
+			}
+		}
+		return nullptr;
+	}
+
 private:
+	friend class Game;
 
 	GameComponent* Parent = nullptr;
 
