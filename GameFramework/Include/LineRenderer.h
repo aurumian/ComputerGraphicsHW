@@ -6,6 +6,8 @@ class LineRenderer : public Renderer
 {
 public:
 
+	LineRenderer();
+
 	virtual void Render() override;
 
 protected:

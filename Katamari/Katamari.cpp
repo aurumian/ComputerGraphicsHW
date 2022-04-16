@@ -7,6 +7,8 @@
 
 int main()
 {
+	int a;
+	std::cin >> a;
 	KatamariGame* game = new KatamariGame();
 
 	game->Run();

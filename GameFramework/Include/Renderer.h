@@ -14,6 +14,8 @@ public:
 
 	void SetColor(Color InColor) { Color = InColor; }
 
+	bool bCastShadow = true;
+
 protected:
 
 	// todo: move to a material

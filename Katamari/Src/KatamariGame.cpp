@@ -126,12 +126,13 @@ void KatamariGame::PrepareResources()
 	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.1f, 0.0f, -4.5f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, -52.0f, 85.0f);
 
-	//MeshRenderer* cup2 = CreateGameComponent<MeshRenderer>();
-	//cup2->SetMeshProxy(squareMeshProxy);
-	//cup2->SetPixelShader(texturedPS);
-	//cup2->SetVertexShader(texturedVS);
-	//cup2->SetAlbedoSRV(cupTexSRV);
-	//cup2->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
+	MeshRenderer* texPlane = CreateGameComponent<MeshRenderer>();
+	texPlane->bCastShadow = false;
+	texPlane->SetMeshProxy(squareMeshProxy);
+	texPlane->SetPixelShader(texturedPS);
+	texPlane->SetVertexShader(texturedVS);
+	texPlane->SetAlbedoSRV(ShadowMapSRV);
+	texPlane->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
 
 	//KatamariComponent* can1 = CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
 	CreateCanComponent(Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f);
@@ -152,7 +153,19 @@ void KatamariGame::PrepareResources()
 
 	// Setup Light
 	// todo: Create a DirectionalLightComponent and get DirLight from it - this will make rotating a bit easier
-	DirectionalLight.direction = XMVector3Rotate(Vector3::Forward, Quaternion::CreateFromYawPitchRoll(0.0f, DirectX::XMConvertToRadians(-70.0f), 0.0f));
+	LightCam.Transform.Rotation = Vector3(-70.0f, 0.0f, 0.0f);
+	LightCam.Transform.Position = Vector3(0.0f, 5.0f, 0.0f);
+	LightCam.UpdateProjectionMatrixOrthographic(20.0f, 20.0f, 0.0f, 100.0f);
+	DirectionalLight.direction = LightCam.Transform.Rotation.GetForwardVector();
+
+	MeshRenderer* floor = CreateGameComponent<MeshRenderer>();
+	floor->SetMeshProxy(squareMeshProxy);
+	floor->SetPixelShader(texturedPS);
+	floor->SetVertexShader(texturedVS);
+	floor->SetAlbedoSRV(pizzaBoxTexSRV);
+	floor->mTransform.Position = Vector3(0.0f, -1.0f, 0.0f);
+	floor->mTransform.Rotation = Vector3(-90.0f, 0.0f, 0.0f);
+	floor->mTransform.Scale = Vector3::One * 10.0f;
 }
 
 void KatamariGame::Update(float DeltaTime)

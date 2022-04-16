@@ -19,6 +19,7 @@ struct DirLight
 	Vector3 direction = Vector3(0.0f, -1.0f, 0.0f);
 	float intensity = 1.0f;
 	Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
+	Matrix WorldToLightClip;
 };
 
 struct CBPerDraw
@@ -26,6 +27,7 @@ struct CBPerDraw
 	Matrix WorldToClip;
 	DirLight dirLight;
 	Vector3 CameraWorldPos;
+	float pad0;
 };
 
 struct LitMaterial
@@ -140,6 +142,12 @@ public:
 	void DestroyComponent(GameComponent* GC);
 
 	DirLight DirectionalLight;
+	Camera LightCam;
+
+	ComPtr<ID3D11ShaderResourceView> GetShadowMapSRV() { return ShadowMapSRV; }
+	ComPtr<ID3D11SamplerState> GetShadowmapSamplerState() { return ShadowmapSamplerState; }
+
+	bool bIsRenderingShadowMap = false;
 
 protected:
 
@@ -159,7 +167,13 @@ protected:
 	ComPtr<ID3D11DepthStencilState> pDSState = nullptr;
 	ComPtr<ID3D11DepthStencilView> DepthStencilView = nullptr;
 
+	ComPtr<ID3D11Texture2D> ShadowMapTex = nullptr;
+	ComPtr<ID3D11DepthStencilView> ShadowMapView = nullptr;
+	ComPtr<ID3D11ShaderResourceView> ShadowMapSRV = nullptr;
+
 	ComPtr<ID3D11SamplerState> DefaultSamplerState = nullptr;
+	ComPtr<ID3D11SamplerState> ShadowmapSamplerState = nullptr;
+
 
 private:
 

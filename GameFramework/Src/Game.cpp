@@ -68,15 +68,7 @@ void Game::CreateBackBuffer()
 	res = Device->CreateRenderTargetView(BackBuf.Get(), nullptr, RenderTargetView.GetAddressOf());
 
 	// Step 11. Set back buffer for output
-	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(Display->GetClientWidth());
-	viewport.Height = static_cast<float>(Display->GetClientHeight());
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	Context->RSSetViewports(1, &viewport);
+	
 
 	// todo: move to mesh material
 	CD3D11_RASTERIZER_DESC rastDesc = {};
@@ -90,7 +82,7 @@ void Game::CreateBackBuffer()
 
 	//Create per draw constant buffer.
 	D3D11_BUFFER_DESC cbDesc;
-	cbDesc.ByteWidth = sizeof(CBPerObject);
+	cbDesc.ByteWidth = sizeof(CBPerDraw);
 	cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 	cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -105,6 +97,7 @@ void Game::CreateBackBuffer()
 
 
 	//Create per object constant buffer.
+	cbDesc.ByteWidth = sizeof(CBPerObject);
 	res = Device->CreateBuffer(&cbDesc, nullptr,
 		PerObjectCB.GetAddressOf());
 
@@ -126,38 +119,6 @@ void Game::CreateBackBuffer()
 	descDepth.MiscFlags = 0;
 	res = Device->CreateTexture2D(&descDepth, NULL, pDepthStencil.GetAddressOf());
 
-	//D3D11_DEPTH_STENCIL_DESC dsDesc;
-
-	//// Depth test parameters
-	//dsDesc.DepthEnable = true;
-	//dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	//dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-	//// Stencil test parameters
-	//dsDesc.StencilEnable = true;
-	//dsDesc.StencilReadMask = 0xFF;
-	//dsDesc.StencilWriteMask = 0xFF;
-
-	//// Stencil operations if pixel is front-facing
-	//dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	//dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	//dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	//dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	//// Stencil operations if pixel is back-facing
-	//dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	//dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	//dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	//dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	//// Create depth stencil state
-	//Device->CreateDepthStencilState(&dsDesc, pDSState.GetAddressOf());
-	
-	//D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	//descDSV.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-	//descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	//descDSV.Texture2D.MipSlice = 0;
-
 	// Create the depth stencil view
 
 	res = Device->CreateDepthStencilView(pDepthStencil.Get(), // Depth stencil texture
@@ -177,6 +138,54 @@ void Game::CreateBackBuffer()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	GetD3DDevice()->CreateSamplerState(&sampDesc, DefaultSamplerState.GetAddressOf());
+
+	// Create shadowmap sampler state
+	D3D11_SAMPLER_DESC smSampDesc;
+	ZeroMemory(&smSampDesc, sizeof(smSampDesc));
+	smSampDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	smSampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	smSampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	smSampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	smSampDesc.BorderColor[0] = 1.0f;
+	smSampDesc.BorderColor[1] = 1.0f;
+	smSampDesc.BorderColor[2] = 1.0f;
+	smSampDesc.BorderColor[3] = 1.0f;
+	smSampDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+	smSampDesc.MinLOD = 0;
+	smSampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	GetD3DDevice()->CreateSamplerState(&smSampDesc, ShadowmapSamplerState.GetAddressOf());
+	
+	// Create shadowmap texture
+	D3D11_TEXTURE2D_DESC descSM;
+	descSM.Width = 2048;
+	descSM.Height = 2048;
+	descSM.MipLevels = 1;
+	descSM.ArraySize = 1;
+	descSM.Format = DXGI_FORMAT_R32_TYPELESS;
+	descSM.SampleDesc.Count = 1;
+	descSM.SampleDesc.Quality = 0;
+	descSM.Usage = D3D11_USAGE_DEFAULT;
+	descSM.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	descSM.CPUAccessFlags = 0;
+	descSM.MiscFlags = 0;
+	res = Device->CreateTexture2D(&descSM, NULL, ShadowMapTex.GetAddressOf());
+
+	// Create the depth stencil view for shadowmap
+	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+	ZeroMemory(&descDSV, sizeof(descDSV));
+	descDSV.Format = DXGI_FORMAT_D32_FLOAT;
+	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	descDSV.Texture2D.MipSlice = 0;
+	res = Device->CreateDepthStencilView(ShadowMapTex.Get(), &descDSV, ShadowMapView.GetAddressOf());  
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC smSRVDesc;
+	//ZeroMemory(&smSRVDesc, sizeof(smSRVDesc));
+	smSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	smSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	smSRVDesc.Texture2D.MostDetailedMip = 0;
+	smSRVDesc.Texture2D.MipLevels = descSM.MipLevels;
+	Device->CreateShaderResourceView(ShadowMapTex.Get(), &smSRVDesc, ShadowMapSRV.GetAddressOf());
+
 }
 
 void Game::Run()
@@ -266,6 +275,53 @@ void Game::Update(float DeltaTime)
 
 void Game::Render()
 {
+#pragma region Draw Shadowmap
+	bIsRenderingShadowMap = true;
+	//Context->PSSetShaderResources(1, 1, nullptr);
+	Context->OMSetRenderTargets(0, nullptr, ShadowMapView.Get());
+	{
+		D3D11_VIEWPORT viewport = {};
+		viewport.Width = 2048;
+		viewport.Height = 2048;
+		viewport.TopLeftX = 0.0f;
+		viewport.TopLeftY = 0.0f;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		Context->RSSetViewports(1, &viewport);
+		Context->ClearDepthStencilView(ShadowMapView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+		CBPerDraw cbData;
+		const Camera& cam = LightCam;
+		cbData.WorldToClip = cam.GetWorldToClipMatrix();
+
+		D3D11_MAPPED_SUBRESOURCE resource = {};
+		auto res = Context->Map(PerDrawCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+
+		memcpy(resource.pData, &cbData, sizeof(cbData));
+
+		Context->Unmap(PerDrawCB.Get(), 0);
+
+		for (Renderer* renderer : Renderers)
+		{
+			if (renderer != nullptr && renderer->bCastShadow)
+			{
+				renderer->Render();
+			}
+		}
+
+	}
+	bIsRenderingShadowMap = false;
+#pragma endregion Draw Shadowmap
+
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = static_cast<float>(Display->GetClientWidth());
+	viewport.Height = static_cast<float>(Display->GetClientHeight());
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+
+	Context->RSSetViewports(1, &viewport);
 	// Bind the depth stencil view
 	Context->OMSetRenderTargets(1,          // One rendertarget view
 		RenderTargetView.GetAddressOf(),      // Render target view, created earlier
@@ -285,6 +341,7 @@ void Game::Render()
 	cbData.WorldToClip = cam.GetWorldToClipMatrix();
 	cbData.CameraWorldPos = cam.Transform.Position;
 	cbData.dirLight = DirectionalLight;
+	cbData.dirLight.WorldToLightClip = LightCam.GetWorldToClipMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE resource = {};
 	auto res = Context->Map(PerDrawCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);

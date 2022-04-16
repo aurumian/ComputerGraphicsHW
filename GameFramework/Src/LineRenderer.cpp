@@ -1,6 +1,11 @@
 #include "LineRenderer.h"
 #include "Shader.h"
 
+LineRenderer::LineRenderer()
+{
+	bCastShadow = false;
+}
+
 void LineRenderer::Render()
 {
 	if (mVertexShader == nullptr || mPixelShader == nullptr || VertexBuffer.Get() == nullptr)

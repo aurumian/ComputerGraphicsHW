@@ -22,6 +22,7 @@ struct DirLight
 	float3 direction;
 	float intensity;
 	float4 color;
+	matrix WorldToLightClip;
 };
 
 cbuffer CBPerDraw : register(b0)
@@ -67,6 +68,9 @@ PS_IN VSMain(VS_IN input)
 Texture2D shaderTexture : register(t0);
 SamplerState samplerState : register(s0);
 
+Texture2D shadowMap : register(t1);
+SamplerComparisonState shadowSampler : register(s1);
+
 float4 PSMain(PS_IN input) : SV_Target
 {
 	float4 col = shaderTexture.Sample(samplerState, input.uv);
@@ -75,10 +79,18 @@ float4 PSMain(PS_IN input) : SV_Target
 	float3 normal = normalize(input.normal);
 
 	float lightAmbient = dirLight.intensity * Mat.ambientCoef;
-	float lightDiffuse = dirLight.intensity * Mat.diffuseCoef * -dot(dirLight.direction, normal);
+	float lightDiffuse = dirLight.intensity * Mat.diffuseCoef * saturate(-dot(dirLight.direction, normal));
 	float lightSpecular = dirLight.intensity * Mat.specularCoef * pow(saturate(dot(reflect(dirLight.direction, normal), view)), Mat.specularExponent);
 
-	col.xyz = col.xyz * (lightAmbient + lightDiffuse + lightSpecular) * dirLight.color;
+	float4 lightSpacePos = mul(float4(input.worldPos, 1.0f), dirLight.WorldToLightClip);
+	lightSpacePos = lightSpacePos / lightSpacePos.w;
+	float2 smUV = lightSpacePos.xy;
+	smUV = smUV * 0.5f + 0.5f;
+	smUV.y = 1.0f - smUV.y;
 
+	float shadow = shadowMap.SampleCmp(shadowSampler, smUV, lightSpacePos.z - 0.003f);
+
+	col.xyz = col.xyz * (lightAmbient + (lightDiffuse + lightSpecular) * shadow) * dirLight.color;
+	//col.xyz = shadow.xxx;
 	return col;
 }

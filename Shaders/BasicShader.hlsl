@@ -17,6 +17,7 @@ struct DirLight
 	float3 direction;
 	float intensity;
 	float4 color;
+	matrix WorldToLightClip;
 };
 
 cbuffer CBPerDraw : register(b0)

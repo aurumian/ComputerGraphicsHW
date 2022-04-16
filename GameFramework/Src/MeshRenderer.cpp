@@ -60,5 +60,11 @@ void MeshRenderer::Render()
 		context->PSSetSamplers(0, 1, defaultSamplerState.GetAddressOf());
 	}
 
+	if (!game->bIsRenderingShadowMap)
+	{
+		context->PSSetShaderResources(1, 1, game->GetShadowMapSRV().GetAddressOf());
+		context->PSSetSamplers(1, 1, game->GetShadowmapSamplerState().GetAddressOf());
+	}
+
 	context->DrawIndexed(mMeshProxy->GetNumIndices(), 0, 0);
 }
