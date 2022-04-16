@@ -2,5 +2,7 @@
 
 bool SphereCollider::DoesOverlap(const SphereCollider& Other) const
 {
-	return Vector3::DistanceSquared(GetWorldTransform().Position, Other.GetWorldTransform().Position) <= Radius * Radius + Other.Radius * Other.Radius;
+	const float distanceSqr = Vector3::DistanceSquared(GetWorldTransform().Position, Other.GetWorldTransform().Position);
+	const float radSum = Radius + Other.Radius;
+	return distanceSqr <= radSum * radSum;
 }
