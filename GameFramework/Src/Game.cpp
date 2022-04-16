@@ -283,6 +283,8 @@ void Game::Render()
 	CBPerDraw cbData;
 	const Camera& cam = GetCurrentCamera();
 	cbData.WorldToClip = cam.GetWorldToClipMatrix();
+	cbData.CameraWorldPos = cam.Transform.Position;
+	cbData.dirLight = DirectionalLight;
 
 	D3D11_MAPPED_SUBRESOURCE resource = {};
 	auto res = Context->Map(PerDrawCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);

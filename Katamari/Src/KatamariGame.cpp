@@ -39,7 +39,7 @@ void KatamariGame::PrepareResources()
 
 	ml.OpenFile("C:\\Users\\titan\\Downloads\\PepsiCan\\PepsiCan.fbx");
 	TexturedMesh canMesh = ml.GetMesh(0);
-	MeshProxy* canMeshProxy = canMesh.CreateMeshProxy();
+	canMeshProxy = canMesh.CreateMeshProxy();
 
 	ml.OpenFile("C:\\Users\\titan\\Downloads\\PizzaBox\\PizzaBox.obj");
 	TexturedMesh pizzaBoxMesh = ml.GetMesh(0);
@@ -113,17 +113,17 @@ void KatamariGame::PrepareResources()
 	staff1->SetPixelShader(ps);
 	staff1->SetVertexShader(vs);
 
-	KatamariComponent* kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(3.0f, 0.0f, 0.0f), 0.26f, Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
-	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.0f, 0.0f, 0.0f), 0.26f, Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
+	KatamariComponent* kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(3.0f, 0.0f, 0.0f), 0.26f, LitMaterial(), Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
+	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.0f, 0.0f, 0.0f), 0.26f, LitMaterial(), Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, 0.0f, 85.0f);
-	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(3.0f, 0.0f, -1.0f), 0.26f, Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
+	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(3.0f, 0.0f, -1.0f), 0.26f, LitMaterial(), Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, 40.0f, -85.0f);
-	CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.0f, 0.0f, -2.0f), 0.26f, Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
-	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(5.2f, 0.0f, -1.0f), 0.65f, Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
+	CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.0f, 0.0f, -2.0f), 0.26f, LitMaterial(), Vector3::One, Vector3(0.0f, -0.3f, 0.0f));
+	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(5.2f, 0.0f, -1.0f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, 50.0f, -85.0f);
-	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(7.7f, 0.0f, -2.0f), 0.65f, Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
+	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(7.7f, 0.0f, -2.0f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, 40.0f, 85.0f);
-	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.1f, 0.0f, -4.5f), 0.65f, Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
+	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.1f, 0.0f, -4.5f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, -52.0f, 85.0f);
 
 	//MeshRenderer* cup2 = CreateGameComponent<MeshRenderer>();
@@ -133,21 +133,26 @@ void KatamariGame::PrepareResources()
 	//cup2->SetAlbedoSRV(cupTexSRV);
 	//cup2->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
 
-	KatamariComponent* can1 = CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 1.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-2.0f, 0.0f, 1.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 3.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-4.0f, 0.0f, 4.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f), Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-5.2f, 0.0f, -2.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f), Vector3(0.0f, -0.5f, 0.0f));
-	CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-4.4f, 0.0f, -4.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f), Vector3(0.0f, -0.5f, 0.0f));
+	//KatamariComponent* can1 = CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
+	CreateCanComponent(Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f);
+	CreateCanComponent(Vector3(-3.0f, 0.0f, 1.0f), 0.26f, Vector3::One * 0.2f);
+	CreateCanComponent(Vector3(-2.0f, 0.0f, 1.0f), 0.26f, Vector3::One * 0.2f);
+	CreateCanComponent(Vector3(-3.0f, 0.0f, 3.0f), 0.26f, Vector3::One * 0.2f);
+	CreateCanComponent(Vector3(-4.0f, 0.0f, 4.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f));
+	CreateCanComponent(Vector3(-5.2f, 0.0f, -2.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f));
+	CreateCanComponent(Vector3(-4.4f, 0.0f, -4.0f), 0.65f, Vector3(0.5f, 0.5f, 0.25f));
 	
-	KatamariComponent* pizzaBox1 = CreateKatamariComponent(pizzaBoxMeshProxy, pizzaBoxTexSRV, Vector3(0.0f, 0.0f, -3.0f), 1.1f, Vector3::One * 0.04f);
+	KatamariComponent* pizzaBox1 = CreateKatamariComponent(pizzaBoxMeshProxy, pizzaBoxTexSRV, Vector3(0.0f, 0.0f, -3.0f), 1.1f, LitMaterial(), Vector3::One * 0.04f);
 	
 
 	PlaneComponent* pc = CreateGameComponent<PlaneComponent>();
 	pc->SetPixelShader(basicPS);
 	pc->SetVertexShader(basicVS);
 	pc->SetColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	// Setup Light
+	// todo: Create a DirectionalLightComponent and get DirLight from it - this will make rotating a bit easier
+	DirectionalLight.direction = XMVector3Rotate(Vector3::Forward, Quaternion::CreateFromYawPitchRoll(0.0f, DirectX::XMConvertToRadians(-70.0f), 0.0f));
 }
 
 void KatamariGame::Update(float DeltaTime)
@@ -215,6 +220,7 @@ KatamariComponent* KatamariGame::CreateKatamariComponent(MeshProxy* InMesh,
 	ComPtr<ID3D11ShaderResourceView> TexSRV, 
 	Vector3 Position, 
 	float Radius, 
+	const LitMaterial& mat,
 	Vector3 MeshScale, 
 	Vector3 MeshLocalPos)
 {
@@ -229,8 +235,19 @@ KatamariComponent* KatamariGame::CreateKatamariComponent(MeshProxy* InMesh,
 	mr->mTransform.Rotation = Vector3(-90.0f, 0.0f, 0.0f);
 	mr->mTransform.Scale = MeshScale;
 	mr->mTransform.Position = MeshLocalPos;
+	mr->Mat = mat;
 	kc->mTransform.Position = Position;
 	return kc;
+}
+
+KatamariComponent* KatamariGame::CreateCanComponent(Vector3 Position, float Radius, Vector3 MeshScale)
+{
+	static LitMaterial canMat;
+	canMat.ambientCoef = 0.232125f;
+	canMat.diffuesCoef = 0.7;
+	canMat.specularCoef = 0.773911;
+	canMat.specularExponent = 30;
+	return CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Position, Radius, canMat, MeshScale, Vector3(0.0f, -0.5f, 0.0f) * MeshScale.z * 5.0f);
 }
 
 KatamariComponent::KatamariComponent()

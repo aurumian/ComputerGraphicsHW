@@ -28,13 +28,18 @@ protected:
 	class PixelShader* texturedPS;
 	class TexturedVertexShader* texturedVS;
 
+	class MeshProxy* canMeshProxy;
+
 	class KatamariComponent* CreateKatamariComponent(
 		class MeshProxy* InMesh, 
 		ComPtr<ID3D11ShaderResourceView> TexSRV, 
 		Vector3 Position, 
-		float Radius, 
+		float Radius,
+		const LitMaterial& mat,
 		Vector3 MeshScale, 
 		Vector3 MeshLocalPos = Vector3::Zero);
+
+	class KatamariComponent* CreateCanComponent(Vector3 Position, float Radius, Vector3 MeshScale);
 };
 
 class KatamariComponent : public GameComponent

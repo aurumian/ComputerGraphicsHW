@@ -66,7 +66,9 @@ struct Transform
 	Transform TransformToWorld(const Transform& ParentTransform) const;
 
 
-	//DirectX::XMFLOAT3X3 GetNormalMatrix() const;
+	Matrix GetNormalMatrix() const;
+
+	Matrix GetNormalMatrixTransposed() const;
 
 	//std::string ToString() const;
 };

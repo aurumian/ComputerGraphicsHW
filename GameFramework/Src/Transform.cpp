@@ -135,4 +135,18 @@ Transform Transform::TransformToWorld(const Transform& ParentTransform) const
 	return GetTransformMatrix() * ParentTransform.GetTransformMatrix();
 }
 
+Matrix Transform::GetNormalMatrix() const
+{
+	Transform tr = *this;
+	tr.Position = Vector3::Zero;
+	return tr.GetTransformMatrix().Invert().Transpose();
+}
+
+Matrix Transform::GetNormalMatrixTransposed() const
+{
+	Transform tr = *this;
+	tr.Position = Vector3::Zero;
+	return tr.GetTransformMatrix().Invert();
+}
+
 

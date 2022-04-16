@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer.h"
+#include "Game.h"
 
 #include <DirectXMath.h>
 
@@ -12,6 +13,8 @@ public:
 	void SetAlbedoSRV(ComPtr<ID3D11ShaderResourceView> InAlbedoSRV);
 
 	virtual void Render() override;
+
+	LitMaterial Mat;
 
 protected:
 	class MeshProxy* mMeshProxy = nullptr;

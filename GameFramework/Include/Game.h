@@ -4,6 +4,7 @@
 
 #include <d3d.h>
 #include <d3d11.h>
+#include "MathInclude.h"
 #include <DirectXMath.h>
 
 #include <vector>
@@ -13,15 +14,34 @@
 using namespace Microsoft::WRL;
 
 #pragma pack(push, 4)
-struct CBPerObject
+struct DirLight
 {
-	DirectX::XMFLOAT4X4 ObjectToWorld;
-	DirectX::XMFLOAT4 Color;
+	Vector3 direction = Vector3(0.0f, -1.0f, 0.0f);
+	float intensity = 1.0f;
+	Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 struct CBPerDraw
 {
 	Matrix WorldToClip;
+	DirLight dirLight;
+	Vector3 CameraWorldPos;
+};
+
+struct LitMaterial
+{
+	float ambientCoef = 0.1f;
+	float specularCoef = 0.5f;
+	float specularExponent= 1.0f;
+	float diffuesCoef = 0.8f;
+};
+
+struct CBPerObject
+{
+	Matrix ObjectToWorld;
+	Matrix NormalO2W;
+	Color Color;
+	LitMaterial Mat;
 };
 #pragma pack(pop)
 
@@ -118,6 +138,8 @@ public:
 	ComPtr<ID3D11SamplerState> GetDefaultSamplerState() { return DefaultSamplerState; }
 
 	void DestroyComponent(GameComponent* GC);
+
+	DirLight DirectionalLight;
 
 protected:
 

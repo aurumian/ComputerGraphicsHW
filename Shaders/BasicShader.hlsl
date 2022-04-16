@@ -8,16 +8,43 @@ struct PS_IN
 	float4 pos : SV_POSITION;
 };
 
+//////////////////////////////////////////////////////
+// Constant buffers
+//////////////////////////////////////////////////////
+
+struct DirLight
+{
+	float3 direction;
+	float intensity;
+	float4 color;
+};
+
 cbuffer CBPerDraw : register(b0)
 {
 	matrix WorldToClip;
+	DirLight dirLight;
+	float3 cameraPos;
+};
+
+struct LitMaterial
+{
+	float ambientCoef;
+	float specularCoef;
+	float specularExponent;
+	float diffuseCoef;
 };
 
 cbuffer CBPerObject : register(b1)
 {
 	matrix ObjectToWorld;
+	matrix NormalO2W;
 	float4 Color;
+	LitMaterial Mat;
 };
+
+//////////////////////////////////////////////////////
+// Shader code
+//////////////////////////////////////////////////////
 
 PS_IN VSMain(VS_IN input)
 {
