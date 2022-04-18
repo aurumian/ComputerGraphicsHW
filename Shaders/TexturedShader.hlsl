@@ -73,7 +73,7 @@ SamplerComparisonState shadowSampler : register(s1);
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	float4 col = shaderTexture.Sample(samplerState, input.uv);
+	float4 col = shaderTexture.Sample(samplerState, input.uv) * Color;
 
 	float3 view = normalize(cameraPos - input.worldPos);
 	float3 normal = normalize(input.normal);

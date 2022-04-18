@@ -176,7 +176,7 @@ public:
 };
 
 #include "MathInclude.h"
-class SphereMesh : public ColoredMesh
+class SphereMesh : public TexturedMesh
 {
 public:
 	SphereMesh()
@@ -186,7 +186,7 @@ public:
 
 #pragma region GeneratePoints
 		// Generate north pole point
-		AddVertex({ Vector3(0.0f, 1.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
+		AddVertex({ Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f) });
 
 		// Generate lattitude points
 		const float phetaDelta = XM_PI / (numPointsVert + 1);
@@ -200,20 +200,23 @@ public:
 			{
 				const float alpha = deltaAlpha * i;
 				const Vector3 position = Vector3(curRadius * cosf(alpha), y, curRadius * sinf(alpha));
-				const Color color = Color(1.0f, 0.5f, 0.5f, 1.0f);
-				AddVertex({ position, color });
+				Vector3 normal;
+				position.Normalize(normal);
+				AddVertex({ position, normal });
 			}
 		}
 
 		// Generate south pole point
-		AddVertex({ Vector3(0.0f, -1.0f, 0.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f) });
+		AddVertex({ Vector3(0.0f, -1.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f) });
 #pragma endregion GeneratePoints
 
 #pragma region CreateTriangleIndices
 		// Connect the first circle to the north pole
 		for (int i = 1; i <= numPointsHor; ++i)
 		{
-			AddFace(0, i, (i % numPointsHor) + 1);
+			AddIndex(0);
+			AddIndex(i);
+			AddIndex((i % numPointsHor) + 1);
 		}
 		// Connect the intermediate circles to each other
 		for (int j = 1; j < numPointsVert; ++j)

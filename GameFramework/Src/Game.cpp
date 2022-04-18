@@ -277,7 +277,8 @@ void Game::Render()
 {
 #pragma region Draw Shadowmap
 	bIsRenderingShadowMap = true;
-	//Context->PSSetShaderResources(1, 1, nullptr);
+	ID3D11ShaderResourceView* nullSRV = nullptr;
+	Context->PSSetShaderResources(1, 1, &nullSRV);
 	Context->OMSetRenderTargets(0, nullptr, ShadowMapView.Get());
 	{
 		D3D11_VIEWPORT viewport = {};

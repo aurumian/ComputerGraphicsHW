@@ -102,9 +102,11 @@ void KatamariGame::PrepareResources()
 	Player->SetRadius(0.52f);
 	orbitCC->GCToOrbit = Player;
 	MeshRenderer* playerMesh = Player->AddChildComponent<MeshRenderer>();
-	playerMesh->SetPixelShader(ps);
-	playerMesh->SetVertexShader(vs);
+	playerMesh->SetPixelShader(texturedPS);
+	playerMesh->SetVertexShader(texturedVS);
+	playerMesh->SetAlbedoSRV(pizzaBoxTexSRV);
 	playerMesh->SetMeshProxy(sphereMeshProxy);
+	playerMesh->SetColor(Color(1.0f, 0.5f, 0.5f, 1.0f));
 	playerMesh->mTransform.Scale = Vector3::One * 0.5f;
 
 	MeshRenderer* mr = nullptr;
@@ -126,13 +128,15 @@ void KatamariGame::PrepareResources()
 	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.1f, 0.0f, -4.5f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, -52.0f, 85.0f);
 
-	MeshRenderer* texPlane = CreateGameComponent<MeshRenderer>();
-	texPlane->bCastShadow = false;
-	texPlane->SetMeshProxy(squareMeshProxy);
-	texPlane->SetPixelShader(texturedPS);
-	texPlane->SetVertexShader(texturedVS);
-	texPlane->SetAlbedoSRV(ShadowMapSRV);
-	texPlane->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
+	//MeshRenderer* texPlane = CreateGameComponent<MeshRenderer>();
+	//texPlane->bCastShadow = false;
+	//texPlane->SetMeshProxy(squareMeshProxy);
+	//texPlane->SetPixelShader(texturedPS);
+	//texPlane->SetVertexShader(texturedVS);
+	//texPlane->SetAlbedoSRV(ShadowMapSRV);
+	//texPlane->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
+	//texPlane->mTransform.Rotation = Vector3(0.0f, 180.0f, 0.0f);
+
 
 	//KatamariComponent* can1 = CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
 	CreateCanComponent(Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f);
@@ -164,8 +168,8 @@ void KatamariGame::PrepareResources()
 	floor->SetVertexShader(texturedVS);
 	floor->SetAlbedoSRV(pizzaBoxTexSRV);
 	floor->mTransform.Position = Vector3(0.0f, -1.0f, 0.0f);
-	floor->mTransform.Rotation = Vector3(-90.0f, 0.0f, 0.0f);
-	floor->mTransform.Scale = Vector3::One * 10.0f;
+	floor->mTransform.Rotation = Vector3(90.0f, 0.0f, 0.0f);
+	floor->mTransform.Scale = Vector3::One * 20.0f;
 }
 
 void KatamariGame::Update(float DeltaTime)

@@ -29,7 +29,7 @@ void LineRenderer::Render()
 	// Update constant buffer with world matrix
 	CBPerObject cbData;
 	cbData.ObjectToWorld = GetWorldTransform().GetTransformMatrixTransposed();
-	cbData.Color = Color;
+	cbData.Color = mColor;
 
 	D3D11_MAPPED_SUBRESOURCE resource = {};
 	auto res = context->Map(game->GetPerObjectConstantBuffer().Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);

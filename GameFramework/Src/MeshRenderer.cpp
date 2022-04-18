@@ -34,12 +34,20 @@ void MeshRenderer::Render()
 	// checking which shader is set now
 	// and/or sorting meshes by used shaders
 	mVertexShader->UseShader();
-	mPixelShader->UseShader();
+	// todo: render the scene with override material instead of using a bool
+	if (game->bIsRenderingShadowMap)
+	{
+		context->PSSetShader(nullptr, nullptr, 0);
+	}
+	else
+	{
+		mPixelShader->UseShader();
+	}
 
 	// Update constant buffer with world matrix
 	CBPerObject cbData;
 	cbData.ObjectToWorld = GetWorldTransform().GetTransformMatrixTransposed();
-	cbData.Color = Color;
+	cbData.Color = mColor;
 	cbData.NormalO2W = GetWorldTransform().GetNormalMatrixTransposed();
 	cbData.Mat = Mat;
 

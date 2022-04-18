@@ -8,6 +8,7 @@
 #include "CameraController.h"
 #include "OrbitCameraController.h"
 #include "InputDevice.h"
+#include "PlaneComponent.h"
 
 void HW2Game::PrepareResources()
 {
@@ -37,6 +38,14 @@ void HW2Game::PrepareResources()
 
 	sc.SetEntryPoint("PSPlainColor");
 	psPlain = sc.CreateShader<PixelShader>();
+
+	sc.SetPathToShader(L"../../Shaders/BasicShader.hlsl");
+	sc.SetEntryPoint("PSMain");
+	PixelShader* basicPS = sc.CreateShader<PixelShader>();
+
+	sc.SetEntryPoint("VSMain");
+	sc.SetTarget("vs_5_0");
+	BasicVertexShader* basicVS = sc.CreateShader<BasicVertexShader>();
 
 	// Setup PerspCamera
 	PerspCamera = new Camera();
@@ -159,6 +168,11 @@ void HW2Game::PrepareResources()
 	OrbitCC = CreateGameComponent<OrbitCameraController>();
 	//orbitCC->SetCameraToControl(PerspCamera);
 	OrbitCC->GCToOrbit = sphere1;
+
+
+	PlaneComponent* pc = CreateGameComponent<PlaneComponent>();
+	pc->SetPixelShader(basicPS);
+	pc->SetVertexShader(basicVS);
 }
 
 void HW2Game::Update(float DeltaTime)
@@ -180,12 +194,19 @@ void HW2Game::Update(float DeltaTime)
 				CurrentCC = OrbitCC;
 				FPSCC->SetCameraToControl(nullptr);
 				OrbitCC->SetCameraToControl(PerspCamera);
+				FPSCC->bShouldUpdate = false;
+				OrbitCC->bShouldUpdate = true;
 			}
 			else
 			{
 				CurrentCC = FPSCC;
 				OrbitCC->SetCameraToControl(nullptr);
 				FPSCC->SetCameraToControl(PerspCamera);
+				Vector3 euler = PerspCamera->Transform.Rotation.GetEulerDegrees();
+				FPSCC->SetPitchYaw(euler.x, euler.y);
+				FPSCC->bShouldUpdate = true;
+				OrbitCC->bShouldUpdate = false;
+
 			}
 			pressTime = GetTotalElapsedTime();
 		}

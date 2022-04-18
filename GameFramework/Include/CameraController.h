@@ -11,6 +11,8 @@ public:
 	void SetCameraToControl(class Camera* InCamera);
 	virtual void Update(float DeltaTime) override;
 
+	void SetPitchYaw(float NewPitch, float NewYaw) { Pitch = NewPitch; Yaw = NewYaw; }
+
 	float Speed = 3.0f;
 private:
 

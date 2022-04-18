@@ -12,14 +12,14 @@ public:
 
 	void SetPixelShader(class PixelShader* InPixelShader) { mPixelShader = InPixelShader; }
 
-	void SetColor(Color InColor) { Color = InColor; }
+	void SetColor(Color InColor) { mColor = InColor; }
 
 	bool bCastShadow = true;
 
 protected:
 
 	// todo: move to a material
-	Color Color;
+	Color mColor = Color(1.0f, 1.0f, 1.0, 1.0f);
 
 	class VertexShader* mVertexShader = nullptr;
 

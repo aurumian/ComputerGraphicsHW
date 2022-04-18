@@ -120,6 +120,6 @@ private:
 	class Camera* OrthoCamera;
 	class OrbitCameraController* OrbitCC;
 	class CameraController* FPSCC;
-	void* CurrentCC = nullptr;
+	class GameComponent* CurrentCC = nullptr;
 };
 
