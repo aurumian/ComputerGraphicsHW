@@ -10,6 +10,22 @@ using namespace Microsoft::WRL;
 
 #include "MathInclude.h"
 
+#pragma pack(push, 4)
+struct ColoredVertex
+{
+	Vector3 Position;
+	Color Color;
+};
+
+struct TexturedVertex
+{
+	Vector3 Position;
+	Vector3 Normal;
+	Vector2 TexCoord;
+};
+#pragma pack (pop)
+
+template <class T>
 class Mesh
 {
 public:
@@ -20,65 +36,56 @@ public:
 	virtual class MeshProxy* CreateMeshProxy() = 0;
 
 	virtual ~Mesh() = default;
+
+	// returns the index of the inserted vertex
+	UINT AddVertex(const T& InVertex)
+	{
+		Vertices.push_back(InVertex);
+		return static_cast<UINT>(Vertices.size() - 1);
+	}
+
+	void AddIndex(UINT InIndex)
+	{
+		Indices.push_back(InIndex);
+	}
+
+	void AddFace(UINT I1, UINT I2, UINT I3)
+	{
+		Indices.push_back(I1);
+		Indices.push_back(I2);
+		Indices.push_back(I3);
+	}
+
+	T& GetVertex(size_t InIndex)
+	{
+		return Vertices[InIndex];
+	}
+
+protected:
+	std::vector<T> Vertices;
+
+	std::vector<UINT> Indices;
 };
 
 
 /*
 * Mesh that has position and color vertex data
 */
-class ColoredMesh : public Mesh
+class ColoredMesh : public Mesh<ColoredVertex>
 {
 public:
-#pragma pack(push, 4)
-	struct Vertex
-	{
-		Vector3 Position;
-		Color Color;
-	};
-#pragma pack (pop)
-
 	virtual class MeshProxy* CreateMeshProxy() override;
-
-	// returns the index of the inserted vertex
-	UINT AddVertex(const Vertex& InVertex);
-	void AddIndex(UINT InIndex);
-
-	void AddFace(UINT I1, UINT I2, UINT I3);
-
-protected:
-	std::vector<Vertex> Vertices;
-
-	std::vector<UINT> Indices;
 };
 
 
 /*
 * Mesh that has position, normal and uv coordinates vertex data
 */
-class TexturedMesh : public Mesh
+class TexturedMesh : public Mesh<TexturedVertex>
 {
 public:
 
-	struct Vertex
-	{
-		Vector3 Position;
-		Vector3 Normal;
-		Vector2 TexCoord;
-	};
-
 	virtual class MeshProxy* CreateMeshProxy() override;
-
-	// todo move to templated base class
-	// returns the index of the inserted vertex
-	UINT AddVertex(const Vertex& InVertex);
-	void AddIndex(UINT InIndex);
-
-	Vertex& GetVertex(size_t index);
-
-protected:
-	std::vector<Vertex> Vertices;
-
-	std::vector<UINT> Indices;
 };
 
 // todo: move to PongMeshes.h and PongMeshes.cpp files

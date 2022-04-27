@@ -23,7 +23,7 @@ TexturedMesh MeshLoader::GetMesh(size_t meshIndex)
 	aiMesh* mesh = scene->mMeshes[meshIndex];
 
 	for (size_t i = 0; i < mesh->mNumVertices; ++i) {
-		TexturedMesh::Vertex v;
+		TexturedVertex v;
 
 		v.Position.x = mesh->mVertices[i].x;
 		v.Position.y = mesh->mVertices[i].y;
