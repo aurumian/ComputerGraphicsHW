@@ -11,20 +11,20 @@ void BallActor::Update(float DeltaTime)
 
 		const float speedPerFrame = Speed * DeltaTime;
 
-		Transform.Position.x += speedPerFrame * Direction.x;
-		Transform.Position.y += speedPerFrame * Direction.y;
+		mTransform.Position.x += speedPerFrame * Direction.x;
+		mTransform.Position.y += speedPerFrame * Direction.y;
 		//Transform.Position.z += Speed * Direction.z;
 
 		// check overlap
 		// if overlapping border, then inverse y direction
 		// if overlapping player inverse x direction
 		// if overlapping player back move the ball to center and update the Score
-		Collider* col = Game::GetInstance()->GetOverlapping(GetComponent<AABB2DCollider>());
+		Collider* col = Game::GetInstance()->GetOverlapping(GetChildComponent<AABB2DCollider>());
 
 		if (col != nullptr && !WaitForEndOverlap)
 		{
 
-			PongActor* pa = dynamic_cast<PongActor*>(col->GetOwner());
+			PongActor* pa = dynamic_cast<PongActor*>(col->GetParent());
 			if (pa != nullptr)
 			{
 				switch (pa->PongType)
@@ -52,9 +52,9 @@ void BallActor::Update(float DeltaTime)
 			WaitForEndOverlap = false;
 		}
 
-		if (abs(Transform.Position.x) > 2.0f || abs(Transform.Position.y) > 2.0f)
+		if (abs(mTransform.Position.x) > 2.0f || abs(mTransform.Position.y) > 2.0f)
 		{
-			Transform.Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+			mTransform.Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 			ResetSpeed();
 		}
 
@@ -67,6 +67,9 @@ void PongGame::PrepareResources()
 	// create mesh
 	squareMesh = new SquareMesh();
 	circleMesh = new CircleMesh();
+
+	MeshProxy* squareMeshProxy = squareMesh->CreateMeshProxy();
+	MeshProxy* circleMeshProxy = circleMesh->CreateMeshProxy();
 
 
 	// create shaders
@@ -94,82 +97,85 @@ void PongGame::PrepareResources()
 
 	const float borderWidth = 0.03f;
 
-	MeshRenderer* mr = BorderLeft->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	MeshRenderer* mr = BorderLeft->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
-	BorderLeft->Transform.Scale.x = borderWidth;
-	BorderLeft->Transform.Position.x = -1 + BorderLeft->Transform.Scale.x / 2.0f;
-	BorderLeft->AddActorComponent<AABB2DCollider>();
+	BorderLeft->mTransform.Scale.x = borderWidth;
+	BorderLeft->mTransform.Position.x = -1 + BorderLeft->mTransform.Scale.x / 2.0f;
+	BorderLeft->AddChildComponent<AABB2DCollider>();
 	BorderLeft->PongType = PongType::Player1Behind;
 
-	mr = BorderRight->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	mr = BorderRight->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
-	BorderRight->Transform.Scale.x = borderWidth;
-	BorderRight->Transform.Position.x = 1 - BorderLeft->Transform.Scale.x / 2.0f;
-	BorderRight->AddActorComponent<AABB2DCollider>();
+	BorderRight->mTransform.Scale.x = borderWidth;
+	BorderRight->mTransform.Position.x = 1 - BorderLeft->mTransform.Scale.x / 2.0f;
+	BorderRight->AddChildComponent<AABB2DCollider>();
 	BorderRight->PongType = PongType::Player2Behind;
 
 
-	mr = BorderTop->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	mr = BorderTop->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
-	BorderTop->Transform.Scale.y = borderWidth * 12.0f / 8.0f;
-	BorderTop->Transform.Position.y = 1 - BorderTop->Transform.Scale.y / 2.0f;
-	BorderTop->AddActorComponent<AABB2DCollider>();
+	BorderTop->mTransform.Scale.y = borderWidth * 12.0f / 8.0f;
+	BorderTop->mTransform.Position.y = 1 - BorderTop->mTransform.Scale.y / 2.0f;
+	BorderTop->AddChildComponent<AABB2DCollider>();
 	BorderTop->PongType = PongType::Border;
 
 
-	mr = BorderBottom->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	mr = BorderBottom->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.4f, 0.4f, 0.4f, 1.0f });
-	BorderBottom->Transform.Scale.y = borderWidth * 12.0f / 8.0f;
-	BorderBottom->Transform.Position.y = -1 + BorderBottom->Transform.Scale.y / 2.0f;
-	BorderBottom->AddActorComponent<AABB2DCollider>();
+	BorderBottom->mTransform.Scale.y = borderWidth * 12.0f / 8.0f;
+	BorderBottom->mTransform.Position.y = -1 + BorderBottom->mTransform.Scale.y / 2.0f;
+	BorderBottom->AddChildComponent<AABB2DCollider>();
 	BorderBottom->PongType = PongType::Border;
 
 
 	// create players
-	player1 = new PlayerActor();
-	mr = player1->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	player1 = CreateGameComponent<PlayerActor>();
+	mr = player1->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.4f, 0.4f, 0.1f, 1.0f });
-	player1->Transform.Scale.y = 0.3f;
-	player1->Transform.Scale.x = borderWidth;
-	player1->Transform.Position.x = -0.7f;
+	player1->mTransform.Scale.y = 0.3f;
+	player1->mTransform.Scale.x = borderWidth;
+	player1->mTransform.Position.x = -0.7f;
 	player1->SetControls(87, 83);
-	player1->AddActorComponent<AABB2DCollider>();
+	player1->AddChildComponent<AABB2DCollider>();
+	player1->bShouldUpdate = true;
 
-	player2 = new PlayerActor();
-	mr = player2->AddActorComponent<MeshRenderer>();
-	mr->SetMesh(squareMesh);
+	player2 = CreateGameComponent<PlayerActor>();
+	mr = player2->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(squareMeshProxy);
 	mr->SetPixelShader(psPlain);
 	mr->SetVertexShader(vs);
 	mr->SetColor({ 0.1f, 0.4f, 0.4f, 1.0f });
-	player2->Transform.Scale.y = 0.3f;
-	player2->Transform.Scale.x = borderWidth;
-	player2->Transform.Position.x = +0.7f;
+	player2->mTransform.Scale.y = 0.3f;
+	player2->mTransform.Scale.x = borderWidth;
+	player2->mTransform.Position.x = +0.7f;
 	//player2->Transform.Rotation.SetEulerAngles({ 0.0f, 0.0f, 45.0f });
 	player2->SetControls(38, 40);
-	player2->AddActorComponent<AABB2DCollider>();
+	player2->AddChildComponent<AABB2DCollider>();
+	player2->bShouldUpdate = true;
 
-	ball = new BallActor();
-	mr = ball->AddActorComponent<MeshRenderer>();
 
-	mr->SetMesh(circleMesh);
+	ball = CreateGameComponent<BallActor>();
+	ball->bShouldUpdate = true;
+	mr = ball->AddChildComponent<MeshRenderer>();
+	mr->SetMeshProxy(circleMeshProxy);
 	mr->SetPixelShader(ps);
 	mr->SetVertexShader(vs);
 	//mr->SetColor({ 0.1f, 0.4f, 0.1f, 1.0f });
-	ball->Transform.Scale = Vector3(0.02f, 0.02f, 0.02f);
-	ball->AddActorComponent<AABB2DCollider>();
+	ball->mTransform.Scale = Vector3(0.02f, 0.02f, 0.02f);
+	ball->AddChildComponent<AABB2DCollider>();
 }

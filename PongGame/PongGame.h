@@ -4,7 +4,7 @@
 
 #include "ShaderCompiler.h"
 #include "Mesh.h"
-#include "Actor.h"
+#include "GameComponent.h"
 #include "MeshRenderer.h"
 #include "InputDevice.h"
 #include "AABB2DCollider.h"
@@ -26,7 +26,7 @@ enum class PongType
 
 };
 
-class PongActor : public Actor
+class PongActor : public GameComponent
 {
 public:
 	PongType PongType = PongType::None;
@@ -56,16 +56,16 @@ public:
 		InputDevice* inputDevice = Game::GetInstance()->GetInputDevice();
 		if (inputDevice->IsKeyDown(UpCode))
 		{
-			Transform.Position.y += MovementSpeed * DeltaTime;
+			mTransform.Position.y += MovementSpeed * DeltaTime;
 		}
 		else if (inputDevice->IsKeyDown(DownCode))
 		{
-			Transform.Position.y -= MovementSpeed * DeltaTime;
+			mTransform.Position.y -= MovementSpeed * DeltaTime;
 		}
-		const float x = Transform.Position.y;
+		const float x = mTransform.Position.y;
 		const float min = -MaxPos;
 		const float max = MaxPos;
-		Transform.Position.y =  x < min ? min : (x > max ? max : x);
+		mTransform.Position.y =  x < min ? min : (x > max ? max : x);
 	}
 
 	int GetScore()
@@ -124,7 +124,7 @@ public:
 			break;
 		}
 
-		ball->Transform.Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.f);
+		ball->mTransform.Position = DirectX::XMFLOAT3(0.0f, 0.0f, 0.f);
 		ball->Direction.x = dirX;
 		ball->Direction.y = static_cast<float>(rand()) / RAND_MAX - 1.0f;
 		ball->ResetSpeed();

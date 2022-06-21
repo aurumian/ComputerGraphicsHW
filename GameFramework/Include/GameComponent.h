@@ -43,6 +43,19 @@ public:
 		return nullptr;
 	}
 
+	template<class T>
+	T* GetChildComponent()
+	{
+		for (GameComponent* gc : Children)
+		{
+			if (T* res = dynamic_cast<T*>(gc))
+			{
+				return res;
+			}
+		}
+		return nullptr;
+	}
+
 private:
 	friend class Game;
 

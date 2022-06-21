@@ -4,6 +4,8 @@
 #include "Shader.h"
 #include "MeshProxy.h"
 
+#include "Mesh.h"
+
 #include <d3d11.h>
 
 void MeshRenderer::SetMeshProxy(MeshProxy* InMeshProxy)
