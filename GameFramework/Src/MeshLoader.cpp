@@ -22,6 +22,8 @@ TexturedMesh MeshLoader::GetMesh(size_t meshIndex)
 
 	aiMesh* mesh = scene->mMeshes[meshIndex];
 
+	
+
 	for (size_t i = 0; i < mesh->mNumVertices; ++i) {
 		TexturedVertex v;
 
@@ -32,6 +34,14 @@ TexturedMesh MeshLoader::GetMesh(size_t meshIndex)
 		v.Normal.x = mesh->mNormals[i].x;
 		v.Normal.y = mesh->mNormals[i].y;
 		v.Normal.z = mesh->mNormals[i].z;
+
+		v.Binormal.x = mesh->mBitangents[i].x;
+		v.Binormal.y = mesh->mBitangents[i].y;
+		v.Binormal.z = mesh->mBitangents[i].z;
+
+		v.Tangent.x = mesh->mTangents[i].x;
+		v.Tangent.y = mesh->mTangents[i].y;
+		v.Tangent.z = mesh->mTangents[i].z;
 
 		res.AddVertex(v);
 	}
@@ -55,7 +65,7 @@ TexturedMesh MeshLoader::GetMesh(size_t meshIndex)
 
 void MeshLoader::OpenFile(std::string filepath)
 {
-	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenNormals);
+	const aiScene* scene = importer.ReadFile(filepath, aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_CalcTangentSpace);
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
 	{
 		cout << "ERROR::ASSIMP::" << importer.GetErrorString() << endl;

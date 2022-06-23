@@ -15,6 +15,8 @@
 
 #include "WICTextureLoader.h"
 
+#include "LightBase.h"
+
 #include <iostream>
 using namespace std;
 
@@ -25,6 +27,9 @@ void KatamariGame::PrepareResources()
 #pragma region Create Meshes
 	SphereMesh sphereMesh = SphereMesh();
 	MeshProxy* sphereMeshProxy = sphereMesh.CreateMeshProxy();
+
+	BasicSphereMesh bsMesh{};
+	MeshProxy* bsProxy = bsMesh.CreateMeshProxy();
 
 	TexturedSquareMesh squareMesh;
 	MeshProxy* squareMeshProxy = squareMesh.CreateMeshProxy();
@@ -44,6 +49,10 @@ void KatamariGame::PrepareResources()
 	ml.OpenFile("C:\\Users\\titan\\Downloads\\PizzaBox\\PizzaBox.obj");
 	TexturedMesh pizzaBoxMesh = ml.GetMesh(0);
 	MeshProxy* pizzaBoxMeshProxy = pizzaBoxMesh.CreateMeshProxy();
+
+	ml.OpenFile("C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_LOD0.fbx");
+	TexturedMesh burgerMesh = ml.GetMesh(0);
+	MeshProxy* burgerMeshProxy = burgerMesh.CreateMeshProxy();
 
 #pragma endregion Create Meshes
 
@@ -88,6 +97,12 @@ void KatamariGame::PrepareResources()
 	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Downloads\\PepsiCan\\PepsiCan.png", pepsiTexResource.GetAddressOf(), pepsiTexSRV.GetAddressOf(), 2048);
 	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Downloads\\PizzaBox\\PizzaBox.jpg", pizzaBoxTexResource.GetAddressOf(), pizzaBoxTexSRV.GetAddressOf(), 2048);
 
+	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_Albedo.jpg", burgerTexResource.GetAddressOf(), burgerTexSRV.GetAddressOf(), 2048);
+	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_Normal_LOD0.jpg", burgerNormal.GetAddressOf(), burgerNormalSRV.GetAddressOf(), 2048);
+	//CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_AO.jpg", burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf(), 2048);
+	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\surface\\displacement_sand ripples_si3jbb2a\\si3jbb2a_2K_Normal.jpg", burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf(), 2048);
+
+
 	// Setup PerspCamera
 	CurrentCamera = new Camera();
 	CurrentCamera->UpdateProjectionMatrixPerspective(45.0f, Display->GetAspectRatio(), 0.01f, 1000.0f);
@@ -128,14 +143,16 @@ void KatamariGame::PrepareResources()
 	kcCup = CreateKatamariComponent(cupMeshProxy, cupTexSRV, Vector3(4.1f, 0.0f, -4.5f), 0.65f, LitMaterial(), Vector3::One * 2, Vector3(0.0f, -0.5f, 0.0f));
 	kcCup->mTransform.Rotation = Vector3(0.0f, -52.0f, 85.0f);
 
-	//MeshRenderer* texPlane = CreateGameComponent<MeshRenderer>();
-	//texPlane->bCastShadow = false;
-	//texPlane->SetMeshProxy(squareMeshProxy);
-	//texPlane->SetPixelShader(texturedPS);
-	//texPlane->SetVertexShader(texturedVS);
-	//texPlane->SetAlbedoSRV(ShadowMapSRV);
-	//texPlane->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
-	//texPlane->mTransform.Rotation = Vector3(0.0f, 180.0f, 0.0f);
+	MeshRenderer* texPlane = CreateGameComponent<MeshRenderer>();
+	texPlane->bCastShadow = false;
+	texPlane->SetMeshProxy(squareMeshProxy);
+	texPlane->SetPixelShader(texturedPS);
+	texPlane->SetVertexShader(texturedVS);
+	texPlane->SetAlbedoSRV(burgerTexSRV);
+	texPlane->SetNormalSRV(burgerSpecSRV);
+	texPlane->mTransform.Position = Vector3(0.0f, 3.0f, 1.0f);
+	texPlane->mTransform.Rotation = Vector3(0.0f, 180.0f, 0.0f);
+	texPlane->mTransform.Scale = Vector3::One * 30.0f;;
 
 
 	//KatamariComponent* can1 = CreateKatamariComponent(canMeshProxy, pepsiTexSRV, Vector3(-3.0f, 0.0f, 0.0f), 0.26f, Vector3::One * 0.2f, Vector3(0.0f, -0.5f, 0.0f));
@@ -160,7 +177,7 @@ void KatamariGame::PrepareResources()
 	LightCam.Transform.Rotation = Vector3(-70.0f, 0.0f, 0.0f);
 	LightCam.Transform.Position = Vector3(0.0f, 5.0f, 0.0f);
 	LightCam.UpdateProjectionMatrixOrthographic(20.0f, 20.0f, 0.0f, 100.0f);
-	DirectionalLight.direction = LightCam.Transform.Rotation.GetForwardVector();
+	DirectiLight.direction = LightCam.Transform.Rotation.GetForwardVector();
 
 	MeshRenderer* floor = CreateGameComponent<MeshRenderer>();
 	floor->SetMeshProxy(squareMeshProxy);
@@ -170,6 +187,67 @@ void KatamariGame::PrepareResources()
 	floor->mTransform.Position = Vector3(0.0f, -1.0f, 0.0f);
 	floor->mTransform.Rotation = Vector3(90.0f, 0.0f, 0.0f);
 	floor->mTransform.Scale = Vector3::One * 20.0f;
+
+	AmbientLight* al = new AmbientLight();
+	MyRenderingSystem->RegisterLight(al);
+
+	QuadRenderer* qr = new QuadRenderer();
+	qr->SetVertexShader(texturedVS);
+	qr->SetPixelShader(texturedPS);
+	al->SetRenderer(qr);
+
+	DirectionalLight* dr = new DirectionalLight();
+	MyRenderingSystem->RegisterLight(dr);
+
+	dr->SetRenderer(qr);
+
+	mr = new MeshRenderer();
+	mr->SetMeshProxy(bsProxy);
+	mr->SetVertexShader(texturedVS);
+	mr->SetPixelShader(texturedPS);
+	mr->mTransform.Scale = Vector3::One * 15.0f;
+
+	PointLight* pl = new PointLight();
+	pl->mTransform.Position = Vector3(1.0f, 2.0f, 2.0f);
+	MyRenderingSystem->RegisterLight(pl);
+	pl->SetRenderer(mr);
+	mr->SetParent(pl);
+
+	pl = new PointLight();
+	pl->mTransform.Position = Vector3(3.0f, 4.0f, -5.0f);
+	MyRenderingSystem->RegisterLight(pl);
+	pl->color = Color(1.0f, 1.0f, 0.2f);
+	mr = new MeshRenderer();
+	mr->SetMeshProxy(bsProxy);
+	mr->SetVertexShader(texturedVS);
+	mr->SetPixelShader(texturedPS);
+	mr->mTransform.Scale = Vector3::One * 10.0f;
+	pl->SetRenderer(mr);
+	mr->SetParent(pl);
+
+	pl = new PointLight();
+	pl->mTransform.Position = Vector3(-3.0f, 2.0f, 7.0f);
+	MyRenderingSystem->RegisterLight(pl);
+	pl->color = Color(0.0f, 1.0f, 1.0f);
+	mr = new MeshRenderer();
+	mr->SetMeshProxy(bsProxy);
+	mr->SetVertexShader(texturedVS);
+	mr->SetPixelShader(texturedPS);
+	mr->mTransform.Scale = Vector3::One * 10.0f;
+	pl->SetRenderer(mr);
+	mr->SetParent(pl);
+
+	mr = CreateGameComponent<MeshRenderer>();
+	mr->SetMeshProxy(burgerMeshProxy);
+	mr->SetPixelShader(texturedPS);
+	mr->SetVertexShader(texturedVS);
+	mr->SetAlbedoSRV(burgerTexSRV);
+	mr->SetNormalSRV(burgerNormalSRV);
+	mr->SetSpecularSRV(burgerSpecSRV);
+	mr->mTransform.Rotation.SetEulerAngles(0.0f, 0.0f, 90.0f);
+	mr->mTransform.Scale = Vector3::One * 0.3f;
+	mr->mTransform.Position = Vector3(0.0f, 4.0f, 0.0f);
+	
 }
 
 void KatamariGame::Update(float DeltaTime)

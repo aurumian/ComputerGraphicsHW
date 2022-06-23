@@ -2,13 +2,15 @@
 
 #include "Renderer.h"
 
+struct RenderingSystemContext;
+
 class LineRenderer : public Renderer
 {
 public:
 
 	LineRenderer();
 
-	virtual void Render() override;
+	virtual void Render(const RenderingSystemContext& RSContext) override;
 
 protected:
 

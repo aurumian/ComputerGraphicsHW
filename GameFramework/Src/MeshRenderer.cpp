@@ -18,7 +18,7 @@ void MeshRenderer::SetAlbedoSRV(ComPtr<ID3D11ShaderResourceView> InAlbedoSRV)
 	mAlbedoSRV = InAlbedoSRV;
 }
 
-void MeshRenderer::Render()
+void MeshRenderer::Render(const RenderingSystemContext& RSContext)
 {
 	if (mVertexShader == nullptr || mPixelShader == nullptr || mMeshProxy == nullptr)
 	{
@@ -35,7 +35,7 @@ void MeshRenderer::Render()
 	// todo: optimize rendering by 
 	// checking which shader is set now
 	// and/or sorting meshes by used shaders
-	mVertexShader->UseShader();
+	mVertexShader->UseShader(static_cast<ShaderFlag>(RSContext.ShaderFlags));
 	// todo: render the scene with override material instead of using a bool
 	if (game->bIsRenderingShadowMap)
 	{
@@ -43,14 +43,14 @@ void MeshRenderer::Render()
 	}
 	else
 	{
-		mPixelShader->UseShader();
+		mPixelShader->UseShader(static_cast<ShaderFlag>(RSContext.ShaderFlags));
 	}
 
 	// Update constant buffer with world matrix
 	CBPerObject cbData;
 	cbData.ObjectToWorld = GetWorldTransform().GetTransformMatrixTransposed();
 	cbData.Color = mColor;
-	cbData.NormalO2W = GetWorldTransform().GetNormalMatrixTransposed();
+	cbData.NormalObjectToWorld = GetWorldTransform().GetNormalMatrixTransposed();
 	cbData.Mat = Mat;
 
 	D3D11_MAPPED_SUBRESOURCE resource = {};
@@ -63,12 +63,20 @@ void MeshRenderer::Render()
 	context->IASetIndexBuffer(mMeshProxy->GetIndexBuffer().Get(), DXGI_FORMAT_R32_UINT, 0);
 	context->IASetVertexBuffers(0, 1, mMeshProxy->GetVertexBuffer().GetAddressOf(), mMeshProxy->GetStrides(), mMeshProxy->GetOffsets());
 
+	context->PSSetConstantBuffers(2, 1, game->GetPerObjectConstantBuffer().GetAddressOf());
+	context->VSSetConstantBuffers(2, 1, game->GetPerObjectConstantBuffer().GetAddressOf());
+
 	// Textures
-	if (mAlbedoSRV.Get() != nullptr)
-	{
-		context->PSSetShaderResources(0, 1, mAlbedoSRV.GetAddressOf());
-		context->PSSetSamplers(0, 1, defaultSamplerState.GetAddressOf());
-	}
+	if (mAlbedoSRV != nullptr)
+	context->PSSetShaderResources(0, 1, mAlbedoSRV.GetAddressOf());
+	context->PSSetSamplers(0, 1, defaultSamplerState.GetAddressOf());
+
+	if (mNormalSRV != nullptr)
+	context->PSSetShaderResources(2, 1, mNormalSRV.GetAddressOf());
+
+	if (mSpecularSRV != nullptr)
+	context->PSSetShaderResources(3, 1, mSpecularSRV.GetAddressOf());
+
 
 	if (!game->bIsRenderingShadowMap)
 	{

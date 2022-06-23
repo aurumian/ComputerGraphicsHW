@@ -51,6 +51,14 @@ bool ShaderCompiler::Compile(ID3DBlob** OutShaderByteCode)
 	{
 		if (errors)
 		{
+			std::cout << "Failed to compile shader with the following macros: ";
+			for (auto macro : Macros)
+			{
+				if (macro.Name != nullptr)
+				{
+					std::cout << macro.Name << ": " << macro.Definition << ";";
+				}
+			}
 			char* compileErrors = (char*)(errors->GetBufferPointer());
 
 			std::cout << ErrorMessagePrefix << compileErrors << std::endl;

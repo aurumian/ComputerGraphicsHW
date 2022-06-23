@@ -6,22 +6,29 @@
 #include <unordered_map>
 
 #include <wrl/client.h>
+
 using namespace Microsoft::WRL;
+
 // @TODO: use int in shader compiler and all the methods to make the system more robust and allow different shaders to use different flags
+// @TODO: avoid compiling every variation
 enum class ShaderFlag
 {
 	None = 0,
 	ForwardRendering = 1 << 0,
 	DeferredOpaque = 1 << 1,
 	DirectionalLight = 1 << 2,
-	MAX
+	DeferredLighting = 1 << 3,
+	QuadOnly = 1 << 4,
+	AmbientLight = 1 << 5,
+	PointLight = 1 << 6,
+	MAX = 1 << 7
 };
 
 DEFINE_ENUM_FLAG_OPERATORS(ShaderFlag)
 
 inline bool operator < (ShaderFlag a, ShaderFlag b) { return static_cast<int>(a) < static_cast<int>(b); }
 
-extern LPCSTR MacroNames[static_cast<int>(ShaderFlag::MAX) - 1];
+extern LPCSTR MacroNames[7];
 
 LPCSTR GetFlagString(ShaderFlag Flags);
 
@@ -84,4 +91,9 @@ class TexturedVertexShader : public VertexShader
 {
 public:
 	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
+	virtual void UseShader(ShaderFlag Flags = ShaderFlag::None) override;
+
+protected:
+	ComPtr<ID3D11InputLayout> PositionOnlyInputLayout;
+
 };

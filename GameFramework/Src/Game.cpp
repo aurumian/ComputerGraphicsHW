@@ -5,6 +5,7 @@
 #include "MeshRenderer.h"
 #include "ShaderCompiler.h"
 #include "AABB2DCollider.h"
+#include "RenderingSystem.h"
 
 #include <chrono>
 
@@ -70,7 +71,7 @@ void Game::CreateBackBuffer()
 	// Step 11. Set back buffer for output
 	
 
-	// todo: move to mesh material
+	// todo: move to mesh material?
 	CD3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.CullMode = D3D11_CULL_NONE;
 	rastDesc.FillMode = D3D11_FILL_SOLID;
@@ -101,8 +102,15 @@ void Game::CreateBackBuffer()
 	res = Device->CreateBuffer(&cbDesc, nullptr,
 		PerObjectCB.GetAddressOf());
 
-	Context->VSSetConstantBuffers(1, 1, PerObjectCB.GetAddressOf());
-	Context->PSSetConstantBuffers(1, 1, PerObjectCB.GetAddressOf());
+	Context->VSSetConstantBuffers(2, 1, PerObjectCB.GetAddressOf());
+	Context->PSSetConstantBuffers(2, 1, PerObjectCB.GetAddressOf());
+
+	// Create lights buffer
+	cbDesc.ByteWidth = sizeof(CBLights);
+	Device->CreateBuffer(&cbDesc, nullptr, &LightsCB);
+
+	Context->VSSetConstantBuffers(1, 1, LightsCB.GetAddressOf());
+	Context->PSSetConstantBuffers(1, 1, LightsCB.GetAddressOf());
 
 	
 	D3D11_TEXTURE2D_DESC descDepth;
@@ -186,6 +194,8 @@ void Game::CreateBackBuffer()
 	smSRVDesc.Texture2D.MipLevels = descSM.MipLevels;
 	Device->CreateShaderResourceView(ShadowMapTex.Get(), &smSRVDesc, ShadowMapSRV.GetAddressOf());
 
+	// @TODO: move this to run?
+	MyRenderingSystem = new RenderingSystem(this);
 }
 
 void Game::Run()
@@ -275,89 +285,7 @@ void Game::Update(float DeltaTime)
 
 void Game::Render()
 {
-#pragma region Draw Shadowmap
-	bIsRenderingShadowMap = true;
-	ID3D11ShaderResourceView* nullSRV = nullptr;
-	Context->PSSetShaderResources(1, 1, &nullSRV);
-	Context->OMSetRenderTargets(0, nullptr, ShadowMapView.Get());
-	{
-		D3D11_VIEWPORT viewport = {};
-		viewport.Width = 2048;
-		viewport.Height = 2048;
-		viewport.TopLeftX = 0.0f;
-		viewport.TopLeftY = 0.0f;
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-
-		Context->RSSetViewports(1, &viewport);
-		Context->ClearDepthStencilView(ShadowMapView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-		CBPerDraw cbData;
-		const Camera& cam = LightCam;
-		cbData.WorldToClip = cam.GetWorldToClipMatrix();
-
-		D3D11_MAPPED_SUBRESOURCE resource = {};
-		auto res = Context->Map(PerDrawCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-		memcpy(resource.pData, &cbData, sizeof(cbData));
-
-		Context->Unmap(PerDrawCB.Get(), 0);
-
-		for (Renderer* renderer : Renderers)
-		{
-			if (renderer != nullptr && renderer->bCastShadow)
-			{
-				renderer->Render();
-			}
-		}
-
-	}
-	bIsRenderingShadowMap = false;
-#pragma endregion Draw Shadowmap
-
-	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(Display->GetClientWidth());
-	viewport.Height = static_cast<float>(Display->GetClientHeight());
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-
-	Context->RSSetViewports(1, &viewport);
-	// Bind the depth stencil view
-	Context->OMSetRenderTargets(1,          // One rendertarget view
-		RenderTargetView.GetAddressOf(),      // Render target view, created earlier
-		DepthStencilView.Get());     // Depth stencil view for the render target
-	float clearColor[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-	//float clearColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	// Bind depth stencil state
-	//
-	//Context->ClearDepthStencilView();
-	Context->ClearRenderTargetView(RenderTargetView.Get(), clearColor);
-	Context->ClearDepthStencilView(DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-
-	// Update world to clip matrix
-	CBPerDraw cbData;
-	const Camera& cam = GetCurrentCamera();
-	cbData.WorldToClip = cam.GetWorldToClipMatrix();
-	cbData.CameraWorldPos = cam.Transform.Position;
-	cbData.dirLight = DirectionalLight;
-	cbData.dirLight.WorldToLightClip = LightCam.GetWorldToClipMatrix();
-
-	D3D11_MAPPED_SUBRESOURCE resource = {};
-	auto res = Context->Map(PerDrawCB.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
-
-	memcpy(resource.pData, &cbData, sizeof(cbData));
-
-	Context->Unmap(PerDrawCB.Get(), 0);
-
-	for (Renderer* renderer : Renderers)
-	{
-		if (renderer != nullptr)
-		{
-			renderer->Render();
-		}
-	}
+	MyRenderingSystem->Draw(0.0f, &GetCurrentCamera());
 
 	SwapChain->Present(1, 0);
 }
@@ -459,7 +387,23 @@ void Game::DestroyComponent(GameComponent* GC)
 	delete GC;
 }
 
+int Game::GetScreenHeight() const
+{
+	return Display->GetClientHeight();
+}
+
+int Game::GetScreenWidth() const
+{
+	return Display->GetClientWidth();
+}
+
 Game::Game()
 {
 	Instance = this;
+}
+
+void Game::InitializeInternal()
+{
+	
+	Initialize();
 }

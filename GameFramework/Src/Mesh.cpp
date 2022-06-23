@@ -20,3 +20,12 @@ MeshProxy* TexturedMesh::CreateMeshProxy()
 
 	return meshProxy;
 }
+
+MeshProxy* BasicMesh::CreateMeshProxy()
+{
+	MeshProxy* meshProxy = new MeshProxy();
+
+	meshProxy->Initialize(&Vertices[0], Vertices.size(), sizeof(BasicVertex), &Indices[0], Indices.size());
+
+	return meshProxy;
+}

@@ -27,13 +27,16 @@ public:
 
 		ComPtr<ID3DBlob> byteCode;
 
-		for (int i = 0; i <= static_cast<int>(ShaderFlag::MAX); ++i)
+		for (int i = 0; i < static_cast<int>(ShaderFlag::MAX); ++i)
 		{
 			ClearMacros();
 			for (int j = 1; j <= i; j<<=1)
 			{
-				ShaderFlag flags = static_cast<ShaderFlag>(j);
-				AddMacro({ GetFlagString(flags), "1"});
+				if (j & i)
+				{
+					ShaderFlag flags = static_cast<ShaderFlag>(j);
+					AddMacro({ GetFlagString(flags), "1" });
+				}
 				
 			}
 			Compile(&byteCode);

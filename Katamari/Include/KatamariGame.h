@@ -22,6 +22,16 @@ protected:
 	ComPtr<ID3D11Resource> pizzaBoxTexResource;
 	ComPtr<ID3D11ShaderResourceView> pizzaBoxTexSRV;
 
+	ComPtr<ID3D11Resource> burgerTexResource;
+	ComPtr<ID3D11ShaderResourceView> burgerTexSRV;
+
+	ComPtr<ID3D11Resource> burgerNormal;
+	ComPtr<ID3D11ShaderResourceView> burgerNormalSRV;
+
+	ComPtr<ID3D11Resource> burgerSpecular;
+	ComPtr<ID3D11ShaderResourceView> burgerSpecSRV;
+
+
 	class PixelShader* basicPS;
 	class BasicVertexShader* basicVS;
 

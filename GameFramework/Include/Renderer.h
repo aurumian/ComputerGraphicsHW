@@ -6,7 +6,7 @@ class Renderer : public GameComponent
 {
 public:
 
-	virtual void Render() = 0;
+	virtual void Render(const RenderingSystemContext& RSContext) = 0;
 
 	void SetVertexShader(class VertexShader* InVertexShader) { mVertexShader = InVertexShader; }
 
@@ -24,4 +24,14 @@ protected:
 	class VertexShader* mVertexShader = nullptr;
 
 	class PixelShader* mPixelShader = nullptr;
+};
+
+
+// @TODO: move to another file
+
+class QuadRenderer : public Renderer
+{
+public:
+	virtual void Render(const RenderingSystemContext& RSContext);
+
 };

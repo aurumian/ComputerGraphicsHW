@@ -1,12 +1,14 @@
 #include "LineRenderer.h"
 #include "Shader.h"
 
+#include "RenderingSystem.h"
+
 LineRenderer::LineRenderer()
 {
 	bCastShadow = false;
 }
 
-void LineRenderer::Render()
+void LineRenderer::Render(const RenderingSystemContext& RSContext)
 {
 	if (mVertexShader == nullptr || mPixelShader == nullptr || VertexBuffer.Get() == nullptr)
 	{

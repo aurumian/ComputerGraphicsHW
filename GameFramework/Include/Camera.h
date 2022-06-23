@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 
+// @TODO: make this a game component
 class Camera
 {
 public:

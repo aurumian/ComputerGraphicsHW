@@ -21,7 +21,14 @@ struct TexturedVertex
 {
 	Vector3 Position;
 	Vector3 Normal;
+	Vector3 Binormal;
+	Vector3 Tangent;
 	Vector2 TexCoord;
+};
+
+struct BasicVertex
+{
+	Vector3 Position;
 };
 #pragma pack (pop)
 
@@ -116,10 +123,10 @@ class TexturedSquareMesh : public TexturedMesh
 public:
 	TexturedSquareMesh()
 	{
-		AddVertex({ Vector3( 1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(1.0f, 0.0f) });
-		AddVertex({ Vector3(-1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(0.0f, 1.0f) });
-		AddVertex({ Vector3( 1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(1.0f, 1.0f) });
-		AddVertex({ Vector3(-1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, -1.0f), Vector2(0.0f, 0.0f) });
+		AddVertex({ Vector3( 1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) });
+		AddVertex({ Vector3(-1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector2(0.0f, 1.0f) });
+		AddVertex({ Vector3( 1.0f, -1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector2(1.0f, 1.0f) });
+		AddVertex({ Vector3(-1.0f,  1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f), Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) });
 
 		AddIndex(0);
 		AddIndex(1);
@@ -209,7 +216,7 @@ public:
 				const Vector3 position = Vector3(curRadius * cosf(alpha), y, curRadius * sinf(alpha));
 				Vector3 normal;
 				position.Normalize(normal);
-				AddVertex({ position, normal });
+				AddVertex({ position, -normal });
 			}
 		}
 
@@ -241,6 +248,82 @@ public:
 					AddIndex(curOffset + circlePoint2);
 					AddIndex(prevOffset + circlePoint2);
 				}
+		}
+		// Connect the last circle to the south pole
+		const int offset = (numPointsVert - 1) * numPointsHor;
+		for (int i = 1; i <= numPointsHor; ++i)
+		{
+			AddIndex(offset + i);
+			AddIndex(offset + (i % numPointsHor) + 1);
+			AddIndex(numPointsHor * numPointsVert + 1);
+		}
+#pragma endregion CreateTriangleIndices
+	}
+};
+
+class BasicMesh : public Mesh<BasicVertex>
+{
+public:
+
+	virtual class MeshProxy* CreateMeshProxy() override;
+};
+
+class BasicSphereMesh : public BasicMesh
+{
+public:
+	BasicSphereMesh()
+	{
+		const int numPointsVert = 20; // Excluding the "pole" points
+		const int numPointsHor = 20;
+
+#pragma region GeneratePoints
+		// Generate north pole point
+		AddVertex({ Vector3(0.0f, 1.0f, 0.0f) });
+
+		// Generate lattitude points
+		const float phetaDelta = XM_PI / (numPointsVert + 1);
+		for (int j = 0; j < numPointsVert; ++j)
+		{
+			const float pheta = XM_PIDIV2 - phetaDelta * (j + 1);
+			const float y = sinf(pheta);
+			const float deltaAlpha = XM_2PI / static_cast<float>(numPointsHor);
+			const float curRadius = cosf(pheta);
+			for (int i = 0; i < numPointsHor; ++i)
+			{
+				const float alpha = deltaAlpha * i;
+				const Vector3 position = Vector3(curRadius * cosf(alpha), y, curRadius * sinf(alpha));
+				AddVertex({ position });
+			}
+		}
+
+		// Generate south pole point
+		AddVertex({ Vector3(0.0f, -1.0f, 0.0f)});
+#pragma endregion GeneratePoints
+
+#pragma region CreateTriangleIndices
+		// Connect the first circle to the north pole
+		for (int i = 1; i <= numPointsHor; ++i)
+		{
+			AddIndex(0);
+			AddIndex(i);
+			AddIndex((i % numPointsHor) + 1);
+		}
+		// Connect the intermediate circles to each other
+		for (int j = 1; j < numPointsVert; ++j)
+		{
+			const int curOffset = j * numPointsHor;
+			const int prevOffset = curOffset - numPointsHor;
+			for (int i = 1; i <= numPointsHor; ++i)
+			{
+				const int circlePoint1 = i;
+				const int circlePoint2 = (i % numPointsHor) + 1;
+				AddIndex(prevOffset + circlePoint2);
+				AddIndex(prevOffset + circlePoint1);
+				AddIndex(curOffset + circlePoint1);
+				AddIndex(curOffset + circlePoint1);
+				AddIndex(curOffset + circlePoint2);
+				AddIndex(prevOffset + circlePoint2);
+			}
 		}
 		// Connect the last circle to the south pole
 		const int offset = (numPointsVert - 1) * numPointsHor;
