@@ -38,8 +38,8 @@ bool ShaderCompiler::Compile(ID3DBlob** OutShaderByteCode)
 	const UINT flags1 = IsDebug ? D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION : 0;
 
 	HRESULT res = D3DCompileFromFile(PathToShader.c_str(),
-		nullptr /*macros*/,
-		nullptr /*inlcude*/,
+		Macros.size() > 1 ? (&Macros[0]) : nullptr /*macros*/,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE  /*inlcude*/,
 		EntryPoint.c_str(),
 		Target.c_str(),
 		flags1,
@@ -85,4 +85,17 @@ void ShaderCompiler::SetEntryPoint(const std::string& InEntryPoint)
 void ShaderCompiler::SetTarget(const std::string& InTarget)
 {
 	Target = InTarget;
+}
+
+void ShaderCompiler::AddMacro(const D3D_SHADER_MACRO& Macro)
+{
+	Macros.pop_back();
+	Macros.push_back(Macro);
+	Macros.push_back({ nullptr, nullptr });
+}
+
+void ShaderCompiler::ClearMacros()
+{
+	Macros.clear();
+	Macros.push_back({ nullptr, nullptr });
 }

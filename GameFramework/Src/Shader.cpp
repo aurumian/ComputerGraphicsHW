@@ -2,13 +2,27 @@
 
 #include "Game.h"
 
-ComPtr<ID3DBlob>& Shader::GetByteCodeRef()
+LPCSTR MacroNames[static_cast<int>(ShaderFlag::MAX) - 1] =
 {
-    return ByteCode;
+	"FORWARD_RENDERING",
+	"DEFERRED_OPAQUE",
+	"DIRECTIONAL_LIGHT"
+};
+
+LPCSTR GetFlagString(ShaderFlag Flags)
+{
+	const int flagsAsInt = static_cast<int>(Flags);
+	if (flagsAsInt % 2 && flagsAsInt != 1)
+	{
+		return nullptr;
+	}
+
+	return MacroNames[flagsAsInt - 1];
 }
 
+
 // todo: update to return bool or hresult and handle errors
-void VertexShader::Initialize()
+void VertexShader::Initialize(ID3DBlob* ByteCode, ShaderFlag Flags)
 {
 	ComPtr<ID3D11Device> device = Game::GetInstance()->GetD3DDevice();
 
@@ -16,18 +30,19 @@ void VertexShader::Initialize()
 		ByteCode->GetBufferPointer(),
 		ByteCode->GetBufferSize(),
 		nullptr, 
-		D3DShaderPointer.GetAddressOf());
+		ShaderVariations.emplace(Flags, nullptr).first->second.GetAddressOf());
 }
 
-void VertexShader::UseShader()
+void VertexShader::UseShader(ShaderFlag Flags)
 {
 	ComPtr<ID3D11DeviceContext> context = Game::GetInstance()->GetD3DDeviceContext();
 
-	context->VSSetShader(D3DShaderPointer.Get(), nullptr, 0);
+	// @TODO: Check if variation actually exists?
+	context->VSSetShader(ShaderVariations[Flags].Get(), nullptr, 0);
 	context->IASetInputLayout(InputLayout.Get());
 }
 
-void PixelShader::Initialize()
+void PixelShader::Initialize(ID3DBlob* ByteCode, ShaderFlag Flags)
 {
 	ComPtr<ID3D11Device> device = Game::GetInstance()->GetD3DDevice();
 
@@ -35,19 +50,25 @@ void PixelShader::Initialize()
 		ByteCode->GetBufferPointer(),
 		ByteCode->GetBufferSize(),
 		nullptr,
-		D3DShaderPointer.GetAddressOf());
+		ShaderVariations.emplace(Flags, nullptr).first->second.GetAddressOf());
 }
 
-void PixelShader::UseShader()
+void PixelShader::UseShader(ShaderFlag Flags)
 {
 	ComPtr<ID3D11DeviceContext> context = Game::GetInstance()->GetD3DDeviceContext();
 
-	context->PSSetShader(D3DShaderPointer.Get(), nullptr, 0);
+	context->PSSetShader(ShaderVariations[Flags].Get(), nullptr, 0);
 }
 
-void BasicVertexShader::Initialize()
+void BasicVertexShader::Initialize(ID3DBlob* ByteCode, ShaderFlag Flags)
 {
-	VertexShader::Initialize();
+	VertexShader::Initialize(ByteCode, Flags);
+
+	// @TODO: Create input layout only once on parent class level?
+	if (Flags != ShaderFlag::None)
+	{
+		return;
+	}
 
 	D3D11_INPUT_ELEMENT_DESC inputElements[] =
 	{
@@ -74,9 +95,15 @@ void BasicVertexShader::Initialize()
 	);
 }
 
-void SimpleVertexShader::Initialize()
+void SimpleVertexShader::Initialize(ID3DBlob* ByteCode, ShaderFlag Flags)
 {
-	VertexShader::Initialize();
+	VertexShader::Initialize(ByteCode, Flags);
+
+	// @TODO: Create input layout only once on parent class level?
+	if (Flags != ShaderFlag::None)
+	{
+		return;
+	}
 
 	D3D11_INPUT_ELEMENT_DESC inputElements[] =
 	{
@@ -113,9 +140,15 @@ void SimpleVertexShader::Initialize()
 	);
 }
 
-void TexturedVertexShader::Initialize()
+void TexturedVertexShader::Initialize(ID3DBlob* ByteCode, ShaderFlag Flags)
 {
-	VertexShader::Initialize();
+	VertexShader::Initialize(ByteCode, Flags);
+
+	// @TODO: Create input layout only once on parent class level?
+	if (Flags != ShaderFlag::None)
+	{
+		return;
+	}
 
 	D3D11_INPUT_ELEMENT_DESC inputElements[] =
 	{
@@ -141,6 +174,26 @@ void TexturedVertexShader::Initialize()
 		},
 		D3D11_INPUT_ELEMENT_DESC
 		{
+			"BINORMAL",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			D3D11_APPEND_ALIGNED_ELEMENT,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
+		},
+		D3D11_INPUT_ELEMENT_DESC
+		{
+			"TANGENT",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			D3D11_APPEND_ALIGNED_ELEMENT,
+			D3D11_INPUT_PER_VERTEX_DATA,
+			0
+		},
+		D3D11_INPUT_ELEMENT_DESC
+		{
 			"TEXCOORD",
 			0,
 			DXGI_FORMAT_R32G32_FLOAT,
@@ -155,7 +208,7 @@ void TexturedVertexShader::Initialize()
 
 	device->CreateInputLayout(
 		inputElements,
-		3,
+		5,
 		ByteCode->GetBufferPointer(),
 		ByteCode->GetBufferSize(),
 		InputLayout.GetAddressOf()

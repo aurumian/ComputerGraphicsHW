@@ -3,23 +3,38 @@
 #include <d3dcommon.h>
 #include <d3d11.h>
 
+#include <unordered_map>
+
 #include <wrl/client.h>
 using namespace Microsoft::WRL;
+// @TODO: use int in shader compiler and all the methods to make the system more robust and allow different shaders to use different flags
+enum class ShaderFlag
+{
+	None = 0,
+	ForwardRendering = 1 << 0,
+	DeferredOpaque = 1 << 1,
+	DirectionalLight = 1 << 2,
+	MAX
+};
+
+DEFINE_ENUM_FLAG_OPERATORS(ShaderFlag)
+
+inline bool operator < (ShaderFlag a, ShaderFlag b) { return static_cast<int>(a) < static_cast<int>(b); }
+
+extern LPCSTR MacroNames[static_cast<int>(ShaderFlag::MAX) - 1];
+
+LPCSTR GetFlagString(ShaderFlag Flags);
 
 class Shader
 {
 public:
 
-	ComPtr<ID3DBlob>& GetByteCodeRef();
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags = ShaderFlag::None) = 0;
 
-	virtual void Initialize() = 0;
-
-	virtual void UseShader() = 0;
+	virtual void UseShader(ShaderFlag Flags = ShaderFlag::None) = 0;
 
 protected:
-	ComPtr<ID3DBlob> ByteCode;
 
-	
 
 	friend class ShaderCompiler;
 };
@@ -29,12 +44,12 @@ class VertexShader : public Shader
 public:
 	//ComPtr<ID3D11VertexShader> GetD3DShaderPointer();
 
-	virtual void Initialize() override;
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
 
-	virtual void UseShader() override;
+	virtual void UseShader(ShaderFlag Flags = ShaderFlag::None) override;
 
-protected: 
-	ComPtr<ID3D11VertexShader> D3DShaderPointer;
+protected:
+	std::unordered_map<ShaderFlag, ComPtr<ID3D11VertexShader>> ShaderVariations;
 
 	ComPtr<ID3D11InputLayout> InputLayout;
 };
@@ -44,29 +59,29 @@ class PixelShader : public Shader
 public:
 	//ComPtr<ID3D11PixelShader> GetD3DShaderPointer();
 
-	virtual void Initialize() override;
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
 
-	virtual void UseShader() override;
+	virtual void UseShader(ShaderFlag Flags = ShaderFlag::None) override;
 
 protected:
-	ComPtr<ID3D11PixelShader> D3DShaderPointer;
+	std::unordered_map<ShaderFlag, ComPtr<ID3D11PixelShader>> ShaderVariations;
 };
 
 class BasicVertexShader : public VertexShader
 {
 public:
-	virtual void Initialize();
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
 };
 
 // todo: move to a separate file
 class SimpleVertexShader : public VertexShader
 {
 public:
-	virtual void Initialize();
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
 };
 
 class TexturedVertexShader : public VertexShader
 {
 public:
-	virtual void Initialize();
+	virtual void Initialize(ID3DBlob* ByteCode, ShaderFlag Flags) override;
 };

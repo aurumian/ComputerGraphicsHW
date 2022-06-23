@@ -2,6 +2,7 @@
 
 #include <string>
 #include <d3dcommon.h>
+#include <vector>
 
 #include "Shader.h"
 
@@ -18,13 +19,28 @@ public:
 	{
 		T* shader = new T();
 
-		if (!Compile(shader->GetByteCodeRef().GetAddressOf()))
+		/*if (!Compile(shader->GetByteCodeRef().GetAddressOf()))
 		{
 			delete shader;
 			return nullptr;
+		}*/
+
+		ComPtr<ID3DBlob> byteCode;
+
+		for (int i = 0; i <= static_cast<int>(ShaderFlag::MAX); ++i)
+		{
+			ClearMacros();
+			for (int j = 1; j <= i; j<<=1)
+			{
+				ShaderFlag flags = static_cast<ShaderFlag>(j);
+				AddMacro({ GetFlagString(flags), "1"});
+				
+			}
+			Compile(&byteCode);
+			shader->Initialize(byteCode.Get(), static_cast<ShaderFlag>(i));
 		}
 
-		shader->Initialize();
+		
 		return shader;
 	}
 
@@ -36,6 +52,9 @@ public:
 
 	void SetTarget(const std::string& InTarget);
 
+	void AddMacro(const D3D_SHADER_MACRO& Macro);
+
+	void ClearMacros();
 
 private:
 
@@ -47,7 +66,7 @@ private:
 
 	std::string Target;
 
-
+	std::vector<D3D_SHADER_MACRO> Macros;
 	
 };
 
