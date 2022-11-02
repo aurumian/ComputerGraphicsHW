@@ -32,6 +32,8 @@ protected:
 	ComPtr<ID3D11ShaderResourceView> burgerSpecSRV;
 
 
+	void CreateNomalMapTextureFromFile(const wchar_t* fileName, ID3D11Resource** texture, ID3D11ShaderResourceView** textureView);
+
 	class PixelShader* basicPS;
 	class BasicVertexShader* basicVS;
 

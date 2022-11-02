@@ -98,10 +98,12 @@ void KatamariGame::PrepareResources()
 	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Downloads\\PizzaBox\\PizzaBox.jpg", pizzaBoxTexResource.GetAddressOf(), pizzaBoxTexSRV.GetAddressOf(), 2048);
 
 	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_Albedo.jpg", burgerTexResource.GetAddressOf(), burgerTexSRV.GetAddressOf(), 2048);
-	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_Normal_LOD0.jpg", burgerNormal.GetAddressOf(), burgerNormalSRV.GetAddressOf(), 2048);
-	//CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_AO.jpg", burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf(), 2048);
-	CreateWICTextureFromFile(GetD3DDevice().Get(), L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\surface\\displacement_sand ripples_si3jbb2a\\si3jbb2a_2K_Normal.jpg", burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf(), 2048);
-
+	CreateNomalMapTextureFromFile(L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\3d\\edible_baked goods_tjciddjqx\\tjciddjqx_2K_Normal_LOD0.jpg",
+		burgerNormal.GetAddressOf(), burgerNormalSRV.GetAddressOf());
+	/*CreateNomalMapTextureFromFile(L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\surface\\displacement_sand ripples_si3jbb2a\\tjciddjqx_2K_Roughness.jpg",
+		burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf());*/
+	CreateNomalMapTextureFromFile(L"C:\\Users\\titan\\Documents\\Megascans Library\\Downloaded\\surface\\displacement_sand ripples_si3jbb2a\\si3jbb2a_2K_Normal.jpg",
+		burgerSpecular.GetAddressOf(), burgerSpecSRV.GetAddressOf());
 
 	// Setup PerspCamera
 	CurrentCamera = new Camera();
@@ -311,7 +313,21 @@ void KatamariGame::Update(float DeltaTime)
 	
 }
 
-KatamariComponent* KatamariGame::CreateKatamariComponent(MeshProxy* InMesh, 
+void KatamariGame::CreateNomalMapTextureFromFile(const wchar_t* fileName, ID3D11Resource** texture, ID3D11ShaderResourceView** textureView)
+{
+	CreateWICTextureFromFileEx(
+		GetD3DDevice().Get(),
+		fileName,
+		0,
+		D3D11_USAGE_DEFAULT,
+		D3D11_BIND_SHADER_RESOURCE,
+		0, 0,
+		WIC_LOADER_IGNORE_SRGB,
+		texture,
+		textureView);
+}
+
+KatamariComponent* KatamariGame::CreateKatamariComponent(MeshProxy* InMesh,
 	ComPtr<ID3D11ShaderResourceView> TexSRV, 
 	Vector3 Position, 
 	float Radius, 
